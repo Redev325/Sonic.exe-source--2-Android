@@ -27,6 +27,8 @@ class Main extends Sprite
 
 	#if android
 	public static var path = lime.system.System.applicationStorageDirectory; // path to storage folder
+	#else
+	public static var path:String = "";
 	#end
 
 	// You can pretty much ignore everything from here on - your code should go in your states.
