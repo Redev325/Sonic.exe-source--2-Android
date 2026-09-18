@@ -39,8 +39,6 @@ jobs:
           haxelib install hscript 2.3.0
           haxelib install actuate
           haxelib install newgrounds 1.1.5
-          haxelib install extension-webview 1.2.4
-          haxelib git extension-webm https://github.com/KadeDev/extension-webm.git
           haxelib run lime setup
           haxelib run lime setup flixel
           haxelib run flixel-tools setup
