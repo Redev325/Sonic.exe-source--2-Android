@@ -437,7 +437,7 @@ class PlayState extends MusicBeatState
 			else if (SONG.song.toLowerCase() == 'sunshine')
 			{
 				var bfdeathshit:FlxSprite = new FlxSprite(); // Yo what if i just preload the game over :)
-				bfdeathshit.frames = Paths.getSparrowAtlas('3DGOpng');
+				bfdeathshit.frames = Paths.getSparrowAtlas('3DGOpng', 'deferred');
 				bfdeathshit.setGraphicSize(720, 720);
 				bfdeathshit.animation.addByPrefix('firstdeath', 'DeathAnim', 24, false);
 				bfdeathshit.screenCenter();

@@ -53,6 +53,7 @@
 		<library name="songs"    preload="true" />
 		<library name="shared"   preload="true" />
 		<library name="videos"   preload="true" />
+		<library name="deferred" preload="true" />
 		<library name="exe"      preload="true" />
 
 	</section>
@@ -61,6 +62,7 @@
 		<library name="songs"    preload="false" />
 		<library name="shared"   preload="false" />
 		<library name="videos"   preload="false" />
+		<library name="deferred" preload="false" />
 		<library name="exe"   	 preload="false" />
 
 	</section>
@@ -71,8 +73,10 @@
 	<assets path="assets/shared"   library="shared"   exclude="*.mp3" unless="web"/>
 	<assets path="assets/exe"      library="exe"	  exclude="*.ogg" if="web"/>
 	<assets path="assets/exe"      library="exe"   	  exclude="*.mp3" unless="web"/>
-	<assets path="assets/videos" exclude="*.mp3" if="web" embed="false"/>
+	<assets path="assets/videos" exclude="*.mp3" if="web"/>
 	<assets path="assets/videos" exclude="*.ogg" unless="web"/>
+	<assets path="assets/deferred" library="deferred" exclude="*.ogg" if="web"/>
+	<assets path="assets/deferred" library="deferred" exclude="*.mp3" unless="web"/>
 
 	
 	<assets path='example_mods' rename='mods' embed='false'/>

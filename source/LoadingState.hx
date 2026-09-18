@@ -65,6 +65,10 @@ class LoadingState extends MusicBeatState
 					checkLoadSong(getVocalPath());
 				checkLibrary("shared");
 				checkLibrary('exe');
+				#if web
+				if (PlayState.SONG.song.toLowerCase() == 'sunshine')
+					checkLibrary('deferred');
+				#end
 				
 				var fadeTime = 0.5;
 				FlxG.camera.fade(FlxG.camera.bgColor, fadeTime, true);
