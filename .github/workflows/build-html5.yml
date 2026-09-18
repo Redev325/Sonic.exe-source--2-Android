@@ -1,0 +1,77 @@
+name: Build and Deploy Sonic.EXE HTML5
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Haxe 4.1.5
+        uses: krdlab/setup-haxe@v2
+        with:
+          haxe-version: 4.1.5
+
+      - name: Install Kade Engine dependencies
+        shell: bash
+        run: |
+          haxelib setup ~/haxelib
+          haxelib install lime 7.9.0
+          haxelib install openfl 9.1.0
+          haxelib install flixel 4.11.0
+          haxelib install flixel-tools 1.5.1
+          haxelib install flixel-addons 2.11.0
+          haxelib install flixel-ui 2.4.0
+          haxelib install hscript 2.3.0
+          haxelib install actuate
+          haxelib install newgrounds 1.1.5
+          haxelib install extension-webview 1.2.4
+          haxelib git extension-webm https://github.com/KadeDev/extension-webm.git
+          haxelib run lime setup
+          haxelib run lime setup flixel
+          haxelib run flixel-tools setup
+
+      - name: Build HTML5
+        run: haxelib run lime build html5 -release
+
+      - name: Add GitHub Pages marker
+        run: touch export/release/html5/bin/.nojekyll
+
+      - name: Upload playable HTML5 build
+        uses: actions/upload-artifact@v4
+        with:
+          name: sonic-exe-html5
+          path: export/release/html5/bin
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: export/release/html5/bin
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
