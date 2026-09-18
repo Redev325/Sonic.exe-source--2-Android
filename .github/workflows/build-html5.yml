@@ -37,11 +37,11 @@ jobs:
           haxelib install flixel-addons 2.11.0
           haxelib install flixel-ui 2.4.0
           haxelib install hscript 2.3.0
-          haxelib install actuate
+          haxelib install actuate 1.9.0
           haxelib install newgrounds 1.1.5
-          haxelib run lime setup
-          haxelib run lime setup flixel
-          haxelib run flixel-tools setup
+          # The Kade HTML5 build does not need flixel-tools' interactive setup.
+          # Lime setup is run non-interactively below.
+          haxelib run lime setup -y
           # Re-assert the Kade-era versions after dependency resolution.
           haxelib set lime 7.9.0
           haxelib set openfl 9.1.0
