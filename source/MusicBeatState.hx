@@ -53,7 +53,8 @@ class MusicBeatState extends FlxUIState
 
 	override function create()
 	{
-		(cast (Lib.current.getChildAt(0), Main)).setFPSCap(FlxG.save.data.fpsCap);
+		if (Main.instance != null)
+			Main.instance.setFPSCap(FlxG.save.data.fpsCap);
 
 		if (transIn != null)
 			trace('reg ' + transIn.region);
@@ -97,7 +98,8 @@ class MusicBeatState extends FlxUIState
 				skippedFrames++;
 
 		if ((cast (Lib.current.getChildAt(0), Main)).getFPSCap != FlxG.save.data.fpsCap && FlxG.save.data.fpsCap <= 290)
-			(cast (Lib.current.getChildAt(0), Main)).setFPSCap(FlxG.save.data.fpsCap);
+			if (Main.instance != null)
+			Main.instance.setFPSCap(FlxG.save.data.fpsCap);
 
 		super.update(elapsed);
 	}
