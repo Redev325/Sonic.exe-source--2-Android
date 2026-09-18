@@ -71,7 +71,7 @@
 	<assets path="assets/shared"   library="shared"   exclude="*.mp3" unless="web"/>
 	<assets path="assets/exe"      library="exe"	  exclude="*.ogg" if="web"/>
 	<assets path="assets/exe"      library="exe"   	  exclude="*.mp3" unless="web"/>
-	<assets path="assets/videos" exclude="*.mp3" if="web"/>
+	<assets path="assets/videos" exclude="*.mp3" if="web" embed="false"/>
 	<assets path="assets/videos" exclude="*.ogg" unless="web"/>
 
 	
