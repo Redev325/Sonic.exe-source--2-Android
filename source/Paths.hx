@@ -147,6 +147,7 @@ class Paths
 		return FlxAtlasFrames.fromSpriteSheetPacker(image(key, library), file('images/$key.txt', library));
 	}
 
+	#if sys
 	inline static public function getUsersDesktop() // Get the path of the users desktop cus smartass i am.
 	{
 		var envs = Sys.environment();
@@ -156,4 +157,10 @@ class Paths
 		}
 		else return null; 
 	}
+	#else
+	inline static public function getUsersDesktop()
+	{
+		return null;
+	}
+	#end
 }
