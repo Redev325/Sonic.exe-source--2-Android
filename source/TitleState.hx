@@ -115,10 +115,25 @@ class TitleState extends MusicBeatState
 		#elseif CHARTING
 		FlxG.switchState(new ChartingState());
 		#else
+		#if web
+		// The Sonic.EXE title screen immediately uses assets from the shared/exe
+		// libraries. Explicitly load those libraries before creating the title UI.
+		Assets.loadLibrary('shared').onComplete(function(_)
+		{
+			Assets.loadLibrary('exe').onComplete(function(_)
+			{
+				new FlxTimer().start(0.1, function(tmr:FlxTimer)
+				{
+					startIntro();
+				});
+			});
+		});
+		#else
 		new FlxTimer().start(0.1, function(tmr:FlxTimer)
 		{
 			startIntro();
 		});
+		#end
 		#end
 	}
 
