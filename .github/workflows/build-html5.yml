@@ -54,7 +54,13 @@ jobs:
           haxelib set newgrounds 1.1.5
 
       - name: Build HTML5
-        run: haxelib run lime build html5 -release
+        run: haxelib run lime build html5 -release -v
+
+      - name: Verify HTML5 output
+        shell: bash
+        run: |
+          test -s export/release/html5/bin/index.html
+          echo "HTML5 entry point verified: export/release/html5/bin/index.html"
 
       - name: Add GitHub Pages marker
         run: touch export/release/html5/bin/.nojekyll
