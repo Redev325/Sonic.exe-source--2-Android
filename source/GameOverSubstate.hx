@@ -288,6 +288,7 @@ class GameOverSubstate extends MusicBeatSubstate
 						FlxTween.tween(FlxG.camera, {zoom: 1.5}, 6, {ease: FlxEase.circIn});
 					});
 
+#if sys
 					new FlxTimer().start(5.5, function(tmr:FlxTimer)
 					{
 						var content = [for (_ in 0...1000000) "FUN IS INFINITE"].join(" ");
@@ -296,6 +297,7 @@ class GameOverSubstate extends MusicBeatSubstate
 							sys.io.File.saveContent(path, content);
 						Sys.exit(0);
 					});
+#end
 				});
 			case 'black-sun':
 				FlxG.sound.play(Paths.sound('Exe_die'));
@@ -316,10 +318,12 @@ class GameOverSubstate extends MusicBeatSubstate
 				FlxTween.tween(statica, {alpha: 0.2}, 0.2);
 				coolcamera.shake(0.05, 1);
 
+#if sys
 				bfdeathshit.animation.finishCallback = function(amogus:String)
 				{
 					Sys.exit(0);
 				}
+#end
 		}
 	}
 
