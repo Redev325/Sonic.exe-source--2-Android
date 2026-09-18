@@ -381,9 +381,10 @@ class Controls extends FlxActionSet
 				/*if (input.device == IFLXINPUT_OBJECT)
 					action.remove(input);*/
 
-				var x = Tinputs.length;
+				var inputs:Array<Dynamic> = cast Tinputs;
+				var x = inputs.length;
 				while (x-- > 0)
-					if (Tinputs[x] == input)
+					if (inputs[x] == input)
 						action.remove(input);
 			}
 		}
