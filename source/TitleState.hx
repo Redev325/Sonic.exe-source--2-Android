@@ -338,12 +338,18 @@ class TitleState extends MusicBeatState
 
 			MainMenuState.firstStart = true;
 
+			#if web
+			// Start the transition video directly from the Enter key press so browser
+			// autoplay policies still allow the original Sonic.EXE transition to play.
+			FlxG.switchState(new VideoState('assets/videos/bothCreditsAndIntro', new MainMenuState()));
+			#else
 			new FlxTimer().start(1, function(tmr:FlxTimer)
 			{
 				FlxG.camera.fade(FlxColor.BLACK, 1, false, function(){
 						LoadingState.loadAndSwitchState(new VideoState('assets/videos/bothCreditsAndIntro', new MainMenuState()));
 				});
 			});
+			#end
 			// FlxG.sound.play(Paths.music('titleShoot'), 0.7);
 		}
 		else if (pressedEnter && !transitioning && skippedIntro && code == 4)
