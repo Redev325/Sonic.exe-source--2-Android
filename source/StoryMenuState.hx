@@ -341,6 +341,9 @@ class StoryMenuState extends MusicBeatState
 				oneclickpls = false;
 				var curDifficulty = '';
 
+				if (FlxG.sound.music != null)
+					FlxG.sound.music.pause();
+
 				FlxG.sound.play(Paths.sound('confirmMenu'));
 
 				if (FlxG.save.data.storyProgress == 0)
