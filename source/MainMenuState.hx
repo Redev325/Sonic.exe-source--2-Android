@@ -17,6 +17,7 @@ import flixel.util.FlxTimer;
 import io.newgrounds.NG;
 #end
 import lime.app.Application;
+import openfl.Assets;
 
 #if windows
 import Discord.DiscordClient;
@@ -62,6 +63,21 @@ class MainMenuState extends MusicBeatState
 
 	override function create()
 	{
+		#if web
+		// The HTML5 build keeps large libraries lazy. Make sure the main-menu
+		// library is fully available before requesting its music/images.
+		if (Assets.getLibrary('preload') == null)
+		{
+			Assets.loadLibrary('preload').onComplete(function(_)
+			{
+				FlxG.switchState(new MainMenuState());
+			}).onError(function(error)
+			{
+				trace('Failed to load preload library for main menu: ' + error);
+			});
+			return;
+		}
+		#end
 
 		trace(FlxG.save.data.soundTestUnlocked);
 		if (FlxG.save.data.soundTestUnlocked) optionShit.push('sound test');
