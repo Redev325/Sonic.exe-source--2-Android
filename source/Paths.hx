@@ -91,9 +91,20 @@ class Paths
 
 	static public function sound(key:String, ?library:String)
 	{
-		if (library == "title")
-			return getPath('sounds/$key.ogg', SOUND, library);
-		return getPath('sounds/$key.$SOUND_EXT', SOUND, library);
+		// HTML5 can use either MP3 or OGG. Prefer the platform extension,
+		// but fall back to the other format when a project asset is missing.
+		var preferred = getPath('sounds/$key.$SOUND_EXT', SOUND, library);
+		if (OpenFlAssets.exists(preferred, SOUND))
+			return preferred;
+
+		var alternateExt = #if web "ogg" #else "mp3" #end;
+		var alternate = getPath('sounds/$key.$alternateExt', SOUND, library);
+		if (OpenFlAssets.exists(alternate, SOUND))
+			return alternate;
+
+		// Preserve the original path behavior so missing assets still produce
+		// a useful asset-path error instead of a silent path change.
+		return preferred;
 	}
 
 	inline static public function soundRandom(key:String, min:Int, max:Int, ?library:String)
@@ -110,9 +121,18 @@ class Paths
 
 	inline static public function music(key:String, ?library:String)
 	{
-		if (library == "title")
-			return getPath('music/$key.mp3', MUSIC, library);
-		return getPath('music/$key.$SOUND_EXT', MUSIC, library);
+		// HTML5 can use either MP3 or OGG. Prefer the platform extension,
+		// but fall back to the other format when a project asset is missing.
+		var preferred = getPath('music/$key.$SOUND_EXT', MUSIC, library);
+		if (OpenFlAssets.exists(preferred, MUSIC))
+			return preferred;
+
+		var alternateExt = #if web "ogg" #else "mp3" #end;
+		var alternate = getPath('music/$key.$alternateExt', MUSIC, library);
+		if (OpenFlAssets.exists(alternate, MUSIC))
+			return alternate;
+
+		return preferred;
 	}
 
 	inline static public function voices(song:String)
