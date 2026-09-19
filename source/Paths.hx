@@ -97,7 +97,7 @@ class Paths
 		if (OpenFlAssets.exists(preferred, SOUND))
 			return preferred;
 
-		var alternateExt = #if web "ogg" #else "mp3" #end;
+		var alternateExt = #if web "mp3" #else "mp3" #end;
 		var alternate = getPath('sounds/$key.$alternateExt', SOUND, library);
 		if (OpenFlAssets.exists(alternate, SOUND))
 			return alternate;
@@ -127,7 +127,7 @@ class Paths
 		if (OpenFlAssets.exists(preferred, MUSIC))
 			return preferred;
 
-		var alternateExt = #if web "ogg" #else "mp3" #end;
+		var alternateExt = #if web "mp3" #else "mp3" #end;
 		var alternate = getPath('music/$key.$alternateExt', MUSIC, library);
 		if (OpenFlAssets.exists(alternate, MUSIC))
 			return alternate;
@@ -139,7 +139,10 @@ class Paths
 	inline static public function musicStreamURL(key:String, ?library:String):String
 	{
 		var lib = (library == null || library == "default" || library == "preload") ? "preload" : library;
-		return 'assets/$lib/music/$key.$SOUND_EXT';
+		var ogg = 'assets/$lib/music/$key.ogg';
+		if (OpenFlAssets.exists(ogg, MUSIC))
+			return ogg;
+		return 'assets/$lib/music/$key.mp3';
 	}
 
 	inline static public function instStreamURL(song:String):String
