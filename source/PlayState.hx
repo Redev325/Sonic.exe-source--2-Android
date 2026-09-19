@@ -4596,7 +4596,8 @@ class PlayState extends MusicBeatState
 
 			if (vocals != null)
 				vocals.pause();
-			FlxG.sound.music.stop();
+			if (FlxG.sound.music != null)
+				FlxG.sound.music.pause();
 
 			openSubState(new GameOverSubstate(boyfriend.getScreenPosition().x, boyfriend.getScreenPosition().y));
 
@@ -4630,7 +4631,8 @@ class PlayState extends MusicBeatState
 
 				if (vocals != null)
 				vocals.pause();
-				FlxG.sound.music.stop();
+				if (FlxG.sound.music != null)
+					FlxG.sound.music.pause();
 
 				openSubState(new GameOverSubstate(boyfriend.getScreenPosition().x, boyfriend.getScreenPosition().y));
 
@@ -5076,7 +5078,13 @@ class PlayState extends MusicBeatState
 				FlxG.sound.music.pause();
 			FlxG.sound.music = FlxG.sound.stream(Paths.musicStreamURL('freakyMenu'), 1, true, null, false);
 #else
+#if web
+			if (FlxG.sound.music != null)
+				FlxG.sound.music.pause();
+			FlxG.sound.music = FlxG.sound.stream(Paths.musicStreamURL('freakyMenu'), 1, true, null, false);
+#else
 			FlxG.sound.playMusic(Paths.music('freakyMenu'));
+#end
 #end
 			offsetTesting = false;
 			PlayStateChangeables.nocheese = true;
@@ -5100,7 +5108,9 @@ class PlayState extends MusicBeatState
 
 					paused = true;
 
-					FlxG.sound.music.stop();
+					if (FlxG.sound.music != null)
+
+						FlxG.sound.music.pause();
 					if (vocals != null)
 				vocals.pause();
 
@@ -5166,7 +5176,8 @@ class PlayState extends MusicBeatState
 					prevCamFollow = camFollow;
 
 					PlayState.SONG = Song.loadFromJson(poop, PlayState.storyPlaylist[0]);
-					FlxG.sound.music.stop();
+					if (FlxG.sound.music != null)
+						FlxG.sound.music.pause();
 
 					if (curSong.toLowerCase() == 'too-slow' && storyDifficulty == 2)
 					{
@@ -5194,7 +5205,9 @@ class PlayState extends MusicBeatState
 
 				paused = true;
 
-				FlxG.sound.music.stop();
+				if (FlxG.sound.music != null)
+
+					FlxG.sound.music.pause();
 				if (vocals != null)
 				vocals.pause();
 
