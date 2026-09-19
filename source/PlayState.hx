@@ -345,7 +345,9 @@ class PlayState extends MusicBeatState
 
 		if (curSong != SONG.song)
 		{
-			Main.dumpCache(); // Honestly it's just preloading so idrc.
+			#if !web
+			Main.dumpCache(); // Keep native memory usage low between songs.
+			#end
 
 			// PRELOADING STUFFS
 			if (SONG.song.toLowerCase() == 'too-slow' && FlxG.save.data.jumpscares)
