@@ -41,10 +41,18 @@ class DialogueBox extends FlxSpriteGroup
 		switch (PlayState.SONG.song.toLowerCase())
 		{
 			case 'senpai':
+				#if web
+				FlxG.sound.music = FlxG.sound.stream(Paths.musicStreamURL('Lunchbox'), 0, false, null, false);
+				#else
 				FlxG.sound.playMusic(Paths.music('Lunchbox'), 0);
+				#end
 				FlxG.sound.music.fadeIn(1, 0, 0.8);
 			case 'thorns':
+				#if web
+				FlxG.sound.music = FlxG.sound.stream(Paths.musicStreamURL('LunchboxScary'), 0, false, null, false);
+				#else
 				FlxG.sound.playMusic(Paths.music('LunchboxScary'), 0);
+				#end
 				FlxG.sound.music.fadeIn(1, 0, 0.8);
 		}
 
@@ -203,7 +211,8 @@ class DialogueBox extends FlxSpriteGroup
 					isEnding = true;
 
 					if (PlayState.SONG.song.toLowerCase() == 'senpai' || PlayState.SONG.song.toLowerCase() == 'thorns')
-						FlxG.sound.music.fadeOut(2.2, 0);
+						if (FlxG.sound.music != null)
+							FlxG.sound.music.fadeOut(2.2, 0);
 
 					new FlxTimer().start(0.2, function(tmr:FlxTimer)
 					{
