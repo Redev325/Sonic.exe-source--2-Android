@@ -43,7 +43,7 @@
 
 	<classpath name="source" />
 
-	<assets path="assets/preload" library="preload" embed="false" exclude="*.ogg" if="web"/>
+	<assets path="assets/preload" library="preload" embed="false" if="web"/>
 	<assets path="assets/preload" library="preload" embed="false" exclude="*.mp3" unless="web"/>
 	
 	<!-- <define name="PRELOAD_ALL" /> -->
