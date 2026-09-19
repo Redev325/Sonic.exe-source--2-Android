@@ -285,10 +285,6 @@ class PlayState extends MusicBeatState
 
 	var defaultCamZoom:Float = 1.05;
 
-	// Keep Triple Trouble's ring receptors visually consistent even when
-	// the atlas switches between static/press/confirm frames of different sizes.
-	private static inline var RING_STRUM_SIZE:Int = 110;
-
 	public static var daPixelZoom:Float = 6;
 
 	public static var theFunne:Bool = true;
@@ -3887,16 +3883,6 @@ class PlayState extends MusicBeatState
 			strumLineNotes.add(babyArrow);
 		}
 
-		// Triple Trouble uses five inputs: Left, Down, Ring(Space), Up, Right.
-		// The ring receptor must sit exactly in the missing middle slot.
-		if (isRing && player == 1 && playerStrums != null && playerStrums.members.length >= 4)
-		{
-			var downStrum = playerStrums.members[1];
-			var upStrum = playerStrums.members[3];
-			var ringStrum = playerStrums.members[2];
-			var targetCenterX = ((downStrum.x + downStrum.width * 0.5) + (upStrum.x + upStrum.width * 0.5)) * 0.5;
-			ringStrum.x = targetCenterX - ringStrum.width * 0.5;
-		}
 
 	}
 
@@ -4034,9 +4020,6 @@ class PlayState extends MusicBeatState
 		if (isRing)
 			counterNum.text = Std.string(cNum);
 
-		// Use FlxG's keyboard state as a second HTML5 Space-key path for rings.
-		if (isRing && FlxG.keys.justPressed.SPACE)
-			tryRingKeyboardHit();
 
 		if ((FlxG.keys.justPressed.SPACE || controls.ACCEPT || (_vpad != null && _vpad.buttonA.justPressed) || FlxG.keys.anyJustPressed([FlxKey.fromString(FlxG.save.data.dodgeBind)])) && canDodge) //This looks like sus
 		{
@@ -4988,13 +4971,6 @@ class PlayState extends MusicBeatState
 						daNote.alpha = playerStrums.members[Math.floor(Math.abs(daNote.noteData))].alpha;
 					}
 
-						// Ring notes use a wider sprite than the receptor. Match centers.
-						if (isRing && daNote.noteData == 2 && playerStrums.members.length >= 4)
-						{
-							var ringStrumForNote = playerStrums.members[2];
-							var ringCenterX = ringStrumForNote.x + ringStrumForNote.width * 0.5;
-							daNote.x = ringCenterX - daNote.width * 0.5;
-						}
 					else if (!daNote.wasGoodHit && !daNote.modifiedByLua)
 					{
 						daNote.visible = strumLineNotes.members[Math.floor(Math.abs(daNote.noteData))].visible;
@@ -5696,32 +5672,6 @@ class PlayState extends MusicBeatState
 	var rightHold:Bool = false;
 	var leftHold:Bool = false;
 
-	// HTML5-safe fallback for Triple Trouble's dedicated ring/Space lane.
-	// Some browsers do not consistently deliver the stage KeyboardEvent for Space,
-	// while FlxG.keys still receives the key state.
-	private function tryRingKeyboardHit():Void
-	{
-		if (!isRing || paused || PlayStateChangeables.botPlay || loadRep || !generatedMusic)
-			return;
-
-		var ringNote:Note = null;
-		notes.forEachAlive(function(daNote:Note)
-		{
-			if (ringNote == null
-				&& daNote.noteData == 2
-				&& daNote.mustPress
-				&& !daNote.isSustainNote
-				&& daNote.canBeHit
-				&& !daNote.tooLate
-				&& !daNote.wasGoodHit)
-			{
-				ringNote = daNote;
-			}
-		});
-
-		if (ringNote != null)
-			goodNoteHit(ringNote);
-	}
 
 	// THIS FUNCTION JUST FUCKS WIT HELD NOTES AND BOTPLAY/REPLAY (also gamepad shit)
 
@@ -5962,18 +5912,6 @@ class PlayState extends MusicBeatState
 			else
 				spr.centerOffsets();
 
-			// Triple Trouble's middle ring receptor has animation frames with
-			// different dimensions. Always anchor that receptor to the fixed
-			// middle-lane center so neither the receptor nor incoming ring notes
-			// jump when the press/confirm animation changes frame size.
-			if (isRing && spr.ID == 2 && playerStrums.members.length >= 4)
-			{
-				var downStrum = playerStrums.members[1];
-				var upStrum = playerStrums.members[3];
-				var targetCenterX = ((downStrum.x + downStrum.width * 0.5) + (upStrum.x + upStrum.width * 0.5)) * 0.5;
-				spr.x = targetCenterX - spr.width * 0.5;
-				spr.y = strumLine.y + (Note.swagWidth - spr.height) * 0.5;
-			}
 		});
 	}
 
@@ -6274,16 +6212,6 @@ class PlayState extends MusicBeatState
 			FlxG.sound.play(Paths.sound('Ring', 'exe'));
 			cNum += 1;
 
-			// Explicitly confirm/pulse the gold ring lane so the hit is visible in HTML5.
-			if (playerStrums != null && playerStrums.members.length > 2)
-			{
-				var ringStrum = playerStrums.members[2];
-				// Do not resize after switching to the larger confirm frame.
-				// setGraphicSize() here permanently changed the sprite scale,
-				// making the normal ring receptor smaller after a hit.
-				ringStrum.animation.play('confirm', true);
-				ringStrum.updateHitbox();
-			}
 		}
 
 		if (note.noteType == 3)
