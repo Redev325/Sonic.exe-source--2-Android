@@ -53,17 +53,35 @@ class StoryMenuState extends MusicBeatState
 	override function create()
 	{
 		#if web
-		// Story Mode uses assets from the exe library. Ensure that library is
-		// ready before constructing the animated background and UI atlases.
-		if (Assets.getLibrary('exe') == null)
+		// Story Mode uses both the normal preload UI assets and the Sonic.EXE
+		// library. Ensure both are ready before constructing any sprites.
+		if (Assets.getLibrary('preload') == null || Assets.getLibrary('exe') == null)
 		{
-			Assets.loadLibrary('exe').onComplete(function(_)
+			function loadExe()
 			{
-				FlxG.switchState(new StoryMenuState());
-			}).onError(function(error)
+				Assets.loadLibrary('exe').onComplete(function(_)
+				{
+					FlxG.switchState(new StoryMenuState());
+				}).onError(function(error)
+				{
+					trace('Failed to load exe library for story menu: ' + error);
+				});
+			}
+
+			if (Assets.getLibrary('preload') == null)
 			{
-				trace('Failed to load exe library for story menu: ' + error);
-			});
+				Assets.loadLibrary('preload').onComplete(function(_)
+				{
+					loadExe();
+				}).onError(function(error)
+				{
+					trace('Failed to load preload library for story menu: ' + error);
+				});
+			}
+			else
+			{
+				loadExe();
+			}
 			return;
 		}
 		#end
