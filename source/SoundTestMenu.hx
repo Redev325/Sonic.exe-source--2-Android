@@ -293,7 +293,8 @@ class SoundTestMenu extends MusicBeatState
 				cameoImg.loadGraphic(Paths.image('cameostuff/Razencro'));
 				cameoImg.setSize(1280, 720);
 				flashyWashy(false);
-				FlxG.sound.music.stop();
+			if (FlxG.sound.music != null)
+				FlxG.sound.music.pause();
 
 			});
 			new FlxTimer().start(2.1, function(tmr:FlxTimer)
@@ -312,7 +313,8 @@ class SoundTestMenu extends MusicBeatState
 					cameoImg.loadGraphic(Paths.image('cameostuff/divide'));
 					cameoImg.setSize(1280, 720);
 					flashyWashy(false);
-					FlxG.sound.music.stop();
+			if (FlxG.sound.music != null)
+				FlxG.sound.music.pause();
 	
 				});
 				new FlxTimer().start(2.1, function(tmr:FlxTimer)
@@ -330,7 +332,8 @@ class SoundTestMenu extends MusicBeatState
 					cameoImg.loadGraphic(Paths.image('cameostuff/Sunkeh'));
 					cameoImg.setSize(1280, 720);
 					flashyWashy(false);
-					FlxG.sound.music.stop();
+			if (FlxG.sound.music != null)
+				FlxG.sound.music.pause();
 	
 				});
 				new FlxTimer().start(2.1, function(tmr:FlxTimer)
@@ -348,7 +351,8 @@ class SoundTestMenu extends MusicBeatState
 					cameoImg.loadGraphic(Paths.image('cameostuff/GamerX'));
 					cameoImg.setSize(1280, 720);
 					flashyWashy(false);
-					FlxG.sound.music.stop();
+			if (FlxG.sound.music != null)
+				FlxG.sound.music.pause();
 	
 				});
 				new FlxTimer().start(2.1, function(tmr:FlxTimer)
@@ -382,7 +386,8 @@ class SoundTestMenu extends MusicBeatState
 				cameoImg.loadGraphic(Paths.image('cameostuff/Marstarbro'));
 				cameoImg.setSize(1280, 720);
 				flashyWashy(false);
-				FlxG.sound.music.stop();
+			if (FlxG.sound.music != null)
+				FlxG.sound.music.pause();
 
 			});
 			new FlxTimer().start(2.1, function(tmr:FlxTimer)
