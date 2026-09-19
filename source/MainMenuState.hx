@@ -27,6 +27,11 @@ using StringTools;
 
 class MainMenuState extends MusicBeatState
 {
+	#if web
+	static var webPreloadReady:Bool = false;
+	static var webPreloadLoading:Bool = false;
+	#end
+
 	var curSelected:Int = 0;
 
 	var xval:Int = 100;
@@ -64,17 +69,25 @@ class MainMenuState extends MusicBeatState
 	override function create()
 	{
 		#if web
-		// The HTML5 build keeps large libraries lazy. Make sure the main-menu
-		// library is fully available before requesting its music/images.
-		if (Assets.getLibrary('preload') == null)
+		// OpenFL can expose a library before its assets have actually been
+		// loaded. The main menu uses those assets synchronously, so explicitly
+		// finish loading the preload library first.
+		if (!webPreloadReady)
 		{
-			Assets.loadLibrary('preload').onComplete(function(_)
+			if (!webPreloadLoading)
 			{
-				FlxG.switchState(new MainMenuState());
-			}).onError(function(error)
-			{
-				trace('Failed to load preload library for main menu: ' + error);
-			});
+				webPreloadLoading = true;
+				Assets.loadLibrary('preload').onComplete(function(_)
+				{
+					webPreloadReady = true;
+					webPreloadLoading = false;
+					FlxG.switchState(new MainMenuState());
+				}).onError(function(error)
+				{
+					webPreloadLoading = false;
+					trace('Failed to load preload library for main menu: ' + error);
+				});
+			}
 			return;
 		}
 		#end
@@ -91,11 +104,7 @@ class MainMenuState extends MusicBeatState
 		PlayStateChangeables.nocheese = true;
 
 		if (!FlxG.sound.music.playing)
-		{
 			FlxG.sound.playMusic(Paths.music('MainMenuMusic'));
-		}
-
-		FlxG.sound.playMusic(Paths.music('MainMenuMusic'));
 
 		persistentUpdate = persistentDraw = true;
 
