@@ -133,6 +133,16 @@ class SoundTestMenu extends MusicBeatState
 
 	function playMusicSafe(key:String):Void
 	{
+		var oldMusic = FlxG.sound.music;
+		if (oldMusic != null)
+		{
+			oldMusic.onComplete = null;
+			FlxG.sound.defaultMusicGroup.remove(oldMusic);
+			if (oldMusic.playing)
+				oldMusic.stop();
+			if (FlxG.sound.music == oldMusic)
+				FlxG.sound.music = null;
+		}
 		FlxG.sound.playMusic(Paths.music(key), 1, true);
 	}
 
@@ -450,5 +460,17 @@ class SoundTestMenu extends MusicBeatState
 			super.update(elapsed);
 		}
 	
+
+	override function destroy():Void
+	{
+		var music = FlxG.sound.music;
+		if (music != null)
+		{
+			music.onComplete = null;
+			if (music.playing)
+				music.stop();
+		}
+		super.destroy();
+	}
 
 }
