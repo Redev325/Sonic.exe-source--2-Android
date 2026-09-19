@@ -69,13 +69,14 @@ jobs:
         shell: bash
         run: |
           echo "=== Largest generated files ==="
-          find export/release/html5/bin -type f -printf '%s %p\n' | sort -nr | head -30
+          find export/release/html5/bin -type f -printf '%s %p\n' | sort -nr | head -30 || true
           echo "=== Preloader define check ==="
           if grep -R "disable_preloader_assets" export/release/html5/haxe 2>/dev/null; then
             echo "disable_preloader_assets appears in generated Haxe sources"
           else
             echo "disable_preloader_assets is not present as literal generated source (likely preprocessed)"
           fi
+          true
 
       - name: Verify HTML5 output
         shell: bash

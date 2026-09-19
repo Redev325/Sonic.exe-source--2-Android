@@ -12,6 +12,9 @@ import openfl.Lib;
 import openfl.display.FPS;
 import openfl.display.Sprite;
 import openfl.events.Event;
+#if web
+import js.Browser;
+#end
 
 class Main extends Sprite
 {
@@ -41,6 +44,69 @@ class Main extends Sprite
 
 		Lib.current.addChild(new Main());
 	}
+
+	#if web
+	private static function installWebErrorHandler():Void
+	{
+		untyped Browser.window.onerror = function(message, source, lineno, colno, error)
+		{
+			var detail = Std.string(message);
+			if (source != null && Std.string(source) != "")
+				detail += "\n\n" + Std.string(source) + ":" + Std.string(lineno) + ":" + Std.string(colno);
+			if (error != null)
+			{
+				var stack = untyped error.stack;
+				if (stack != null && Std.string(stack) != "")
+					detail += "\n\n" + Std.string(stack);
+			}
+			showWebError(detail);
+			return false;
+		};
+
+		untyped Browser.window.onunhandledrejection = function(event)
+		{
+			var reason = untyped event.reason;
+			showWebError("Unhandled promise rejection:\n\n" + Std.string(reason));
+		};
+	}
+
+	private static function showWebError(message:String):Void
+	{
+		var old = Browser.document.getElementById("neo-web-error");
+		if (old != null)
+			Browser.document.body.removeChild(old);
+
+		var panel = Browser.document.createElement("div");
+		panel.id = "neo-web-error";
+		panel.style.position = "fixed";
+		panel.style.left = "0";
+		panel.style.top = "0";
+		panel.style.width = "100%";
+		panel.style.height = "100%";
+		panel.style.zIndex = "2147483647";
+		panel.style.backgroundColor = "#090909";
+		panel.style.color = "#ffdddd";
+		panel.style.fontFamily = "monospace";
+		panel.style.fontSize = "16px";
+		panel.style.padding = "24px";
+		panel.style.boxSizing = "border-box";
+		panel.style.overflow = "auto";
+		panel.style.whiteSpace = "pre-wrap";
+
+		var heading = Browser.document.createElement("div");
+		heading.textContent = "Sonic.EXE HTML5 startup error";
+		heading.style.fontSize = "24px";
+		heading.style.fontWeight = "bold";
+		heading.style.marginBottom = "18px";
+		panel.appendChild(heading);
+
+		var body = Browser.document.createElement("div");
+		body.textContent = message;
+		panel.appendChild(body);
+
+		Browser.document.body.appendChild(panel);
+	}
+	#end
 
 	public function new()
 	{

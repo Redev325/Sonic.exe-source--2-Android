@@ -72,7 +72,9 @@ class TitleState extends MusicBeatState
 
 		@:privateAccess
 		{
-			trace("Loaded " + openfl.Assets.getLibrary("default").assetsLoaded + " assets (DEFAULT)");
+			var startupLibrary = #if web openfl.Assets.getLibrary("preload") #else openfl.Assets.getLibrary("default") #end;
+			if (startupLibrary != null)
+				trace("Loaded startup assets: " + startupLibrary.assetsLoaded);
 		}
 
 		PlayerSettings.init();
