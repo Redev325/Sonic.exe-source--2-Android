@@ -70,8 +70,17 @@ class KeyBinds
             trace("No MIDDLE");
         }
         if (StringTools.contains(FlxG.save.data.dodgeBind,"NUMPAD"))
-            FlxG.save.data.middleBind = "SPACE";
-        
+            FlxG.save.data.dodgeBind = "SPACE";
+
+        // killBind is used by Controls.loadKeyBinds() but was not initialized here.
+        // A fresh HTML5 save therefore passed null to FlxKey.fromString().
+        if(FlxG.save.data.killBind == null){
+            FlxG.save.data.killBind = "R";
+            trace("No KILL");
+        }
+        if (StringTools.contains(FlxG.save.data.killBind,"NUMPAD"))
+            FlxG.save.data.killBind = "R";
+
         if(FlxG.save.data.gpupBind == null){
             FlxG.save.data.gpupBind = "DPAD_UP";
             trace("No GUP");
