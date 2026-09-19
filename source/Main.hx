@@ -39,8 +39,11 @@ class Main extends Sprite
 
 	public static function main():Void
 	{
+		#if web
+		installWebErrorHandler();
+		#end
 
-		// quick checks 
+		// quick checks
 
 		Lib.current.addChild(new Main());
 	}
