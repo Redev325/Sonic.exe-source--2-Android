@@ -3873,6 +3873,13 @@ class PlayState extends MusicBeatState
 			if (PlayStateChangeables.Optimize)
 				babyArrow.x -= 275;
 
+			// Triple Trouble uses a dedicated Space/ring lane at logical index 2.
+			// The ring graphic's visual center sits slightly to the right of the
+			// gap between the Down and Up receptors, so only its display position
+			// is corrected; input/chart lane 2 remains unchanged.
+			if (isRing && player == 1 && i == 2)
+				babyArrow.x -= Note.swagWidth / 3;
+
 			if (FlxG.save.data.midscroll && player == 1)
 				babyArrow.x -= 68.75 * deezNuts[ballsinyojaws];
 			if (FlxG.save.data.midscroll && player == 0)
@@ -3886,23 +3893,6 @@ class PlayState extends MusicBeatState
 			strumLineNotes.add(babyArrow);
 		}
 	}
-
-		// Triple Trouble uses five player lanes: Left, Down, Ring/Space, Up, Right.
-		// The ring atlas frame has a different visual center than the arrow frames,
-		// so center its actual graphic between the Down and Up receptor graphics.
-		// This keeps the logical lane at index 2 unchanged for input/chart handling.
-		if (isRing && player == 1 && playerStrums.members.length >= 4)
-		{
-			var ringStrum = playerStrums.members[2];
-			var downMid = playerStrums.members[1].getGraphicMidpoint();
-			var upMid = playerStrums.members[3].getGraphicMidpoint();
-			var ringMid = ringStrum.getGraphicMidpoint();
-			var targetX = (downMid.x + upMid.x) / 2;
-			ringStrum.x += targetX - ringMid.x;
-			downMid.put();
-			upMid.put();
-			ringMid.put();
-		}
 
 
 	function tweenCamIn():Void
