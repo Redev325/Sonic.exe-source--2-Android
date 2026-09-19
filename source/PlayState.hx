@@ -3931,7 +3931,7 @@ class PlayState extends MusicBeatState
 		if (isRing)
 			counterNum.text = Std.string(cNum);
 
-		if ((FlxG.keys.justPressed.SPACE || controls.ACCEPT || _vpad.buttonA.justPressed || FlxG.keys.anyJustPressed([FlxKey.fromString(FlxG.save.data.dodgeBind)])) && canDodge) //This looks like sus
+		if ((FlxG.keys.justPressed.SPACE || controls.ACCEPT || (_vpad != null && _vpad.buttonA.justPressed) || FlxG.keys.anyJustPressed([FlxKey.fromString(FlxG.save.data.dodgeBind)])) && canDodge) //This looks like sus
 		{
 			dodging = true;
 			boyfriend.playAnim('dodge', true);
