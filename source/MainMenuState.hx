@@ -108,21 +108,11 @@ class MainMenuState extends MusicBeatState
 		if (FlxG.sound.music == null || !FlxG.sound.music.playing)
 		{
 			#if web
-			// MainMenuMusic is in the preload library and must be fully loaded before
-			// OpenFL tries to use it as a MUSIC/SOUND asset on HTML5.
-			var menuMusicPath = Paths.music('MainMenuMusic');
-			Assets.loadSound(menuMusicPath).onComplete(function(_)
-			{
-				if (FlxG.sound.music == null || !FlxG.sound.music.playing)
-				{
-					FlxG.sound.playMusic(menuMusicPath, 0, true);
-					FlxG.sound.music.persist = true;
-					FlxG.sound.music.fadeIn(5, 0, 0.7);
-				}
-			}).onError(function(error)
-			{
-				trace('Failed to load MainMenuMusic on HTML5: ' + error);
-			});
+			// Browser audio is asynchronous, so stream the menu music instead of
+			// asking OpenFL for a synchronously available asset.
+			FlxG.sound.music = FlxG.sound.stream(Paths.musicStreamURL('MainMenuMusic'), 0, true, null, false);
+			FlxG.sound.music.persist = true;
+			FlxG.sound.music.fadeIn(5, 0, 0.7);
 			#else
 			FlxG.sound.playMusic(Paths.music('MainMenuMusic'));
 			#end
