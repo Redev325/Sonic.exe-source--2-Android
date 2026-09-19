@@ -3306,10 +3306,14 @@ class PlayState extends MusicBeatState
 			#end
 		}
 
-		FlxG.sound.music.onComplete = function() // skill issue + ratio + blocked + didn't ask.
+		if (FlxG.sound.music != null)
 		{
-			vocals.volume = 0;
-			endSong();
+			FlxG.sound.music.onComplete = function()
+			{
+				if (vocals != null)
+					vocals.volume = 0;
+				endSong();
+			}
 		}
 		if (vocals != null)
 			vocals.play();
@@ -3844,10 +3848,9 @@ class PlayState extends MusicBeatState
 		if (paused)
 		{
 			if (FlxG.sound.music != null)
-			{
 				FlxG.sound.music.pause();
+			if (vocals != null)
 				vocals.pause();
-			}
 
 			#if windows
 			DiscordClient.changePresence("PAUSED on "
@@ -3914,12 +3917,19 @@ class PlayState extends MusicBeatState
 
 	function resyncVocals():Void
 	{
-		vocals.pause();
+		if (vocals != null)
+			vocals.pause();
 
-		FlxG.sound.music.play();
-		Conductor.songPosition = FlxG.sound.music.time;
-		vocals.time = Conductor.songPosition;
-		vocals.play();
+		if (FlxG.sound.music != null)
+		{
+			FlxG.sound.music.play();
+			Conductor.songPosition = FlxG.sound.music.time;
+			if (vocals != null)
+			{
+				vocals.time = Conductor.songPosition;
+				vocals.play();
+			}
+		}
 
 		#if windows
 		DiscordClient.changePresence(detailsText
