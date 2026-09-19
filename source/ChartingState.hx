@@ -573,14 +573,23 @@ class ChartingState extends MusicBeatState
 		FlxG.sound.music.pause();
 		vocals.pause();
 
-		FlxG.sound.music.onComplete = function()
+		var editorMusic = FlxG.sound.music;
+		if (editorMusic != null)
 		{
-			vocals.pause();
-			vocals.time = 0;
-			FlxG.sound.music.pause();
-			FlxG.sound.music.time = 0;
-			changeSection();
-		};
+			editorMusic.onComplete = function()
+			{
+				if (editorMusic != FlxG.sound.music)
+					return;
+				if (vocals != null)
+				{
+					vocals.pause();
+					vocals.time = 0;
+				}
+				editorMusic.pause();
+				editorMusic.time = 0;
+				changeSection();
+			};
+		}
 	}
 
 	function generateUI():Void
