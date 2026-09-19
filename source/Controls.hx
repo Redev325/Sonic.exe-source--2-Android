@@ -711,38 +711,75 @@ class Controls extends FlxActionSet
 		#end*/
 	}
 
+	// Return a valid saved binding even when the browser's save data is
+	// missing or contains an unexpected null value.
+	static function safeBind(value:Dynamic, fallback:String):String
+	{
+		if (value == null)
+			return fallback;
+
+		var valueString = Std.string(value);
+		if (valueString == null || valueString.length == 0)
+			return fallback;
+
+		return valueString;
+	}
+
 	public function loadKeyBinds()
 	{
-
-		//trace(FlxKey.fromString(FlxG.save.data.upBind));
-
 		removeKeyboard();
 		if (gamepadsAdded.length != 0)
 			removeGamepad();
 		KeyBinds.keyCheck();
 
+		var upBind = safeBind(FlxG.save.data.upBind, "W");
+		var downBind = safeBind(FlxG.save.data.downBind, "S");
+	var leftBind = safeBind(FlxG.save.data.leftBind, "A");
+	var rightBind = safeBind(FlxG.save.data.rightBind, "D");
+	var middleBind = safeBind(FlxG.save.data.middleBind, "SPACE");
+	var killBind = safeBind(FlxG.save.data.killBind, "R");
+
+		var gpUpBind = safeBind(FlxG.save.data.gpupBind, "DPAD_UP");
+		var gpLeftBind = safeBind(FlxG.save.data.gpleftBind, "DPAD_LEFT");
+		var gpDownBind = safeBind(FlxG.save.data.gpdownBind, "DPAD_DOWN");
+		var gpRightBind = safeBind(FlxG.save.data.gprightBind, "DPAD_RIGHT");
+		var gpMiddleBind = safeBind(FlxG.save.data.gpmiddleBind, "A");
+
+		// Keep the browser save data repaired as well as the runtime values.
+		FlxG.save.data.upBind = upBind;
+		FlxG.save.data.downBind = downBind;
+		FlxG.save.data.leftBind = leftBind;
+		FlxG.save.data.rightBind = rightBind;
+		FlxG.save.data.middleBind = middleBind;
+		FlxG.save.data.killBind = killBind;
+		FlxG.save.data.gpupBind = gpUpBind;
+		FlxG.save.data.gpleftBind = gpLeftBind;
+		FlxG.save.data.gpdownBind = gpDownBind;
+		FlxG.save.data.gprightBind = gpRightBind;
+		FlxG.save.data.gpmiddleBind = gpMiddleBind;
+
 		var buttons = new Map<Control,Array<FlxGamepadInputID>>();
 
-		buttons.set(Control.UP,[FlxGamepadInputID.fromString(FlxG.save.data.gpupBind)]);
-		buttons.set(Control.LEFT,[FlxGamepadInputID.fromString(FlxG.save.data.gpleftBind)]);
-		buttons.set(Control.DOWN,[FlxGamepadInputID.fromString(FlxG.save.data.gpdownBind)]);
-		buttons.set(Control.RIGHT,[FlxGamepadInputID.fromString(FlxG.save.data.gprightBind)]);
+		buttons.set(Control.UP,[FlxGamepadInputID.fromString(gpUpBind)]);
+		buttons.set(Control.LEFT,[FlxGamepadInputID.fromString(gpLeftBind)]);
+		buttons.set(Control.DOWN,[FlxGamepadInputID.fromString(gpDownBind)]);
+		buttons.set(Control.RIGHT,[FlxGamepadInputID.fromString(gpRightBind)]);
 		buttons.set(Control.ACCEPT,[FlxGamepadInputID.A]);
 		buttons.set(Control.BACK,[FlxGamepadInputID.B]);
 		buttons.set(Control.PAUSE,[FlxGamepadInputID.START]);
-		buttons.set(Control.SPACEB,[FlxGamepadInputID.fromString(FlxG.save.data.gpmiddleBind)]);
+		buttons.set(Control.SPACEB,[FlxGamepadInputID.fromString(gpMiddleBind)]);
 
 		addGamepad(0,buttons);
 
-		inline bindKeys(Control.UP, [FlxKey.fromString(FlxG.save.data.upBind), FlxKey.UP]);
-		inline bindKeys(Control.DOWN, [FlxKey.fromString(FlxG.save.data.downBind), FlxKey.DOWN]);
-		inline bindKeys(Control.LEFT, [FlxKey.fromString(FlxG.save.data.leftBind), FlxKey.LEFT]);
-		inline bindKeys(Control.RIGHT, [FlxKey.fromString(FlxG.save.data.rightBind), FlxKey.RIGHT]);
+		inline bindKeys(Control.UP, [FlxKey.fromString(upBind), FlxKey.UP]);
+		inline bindKeys(Control.DOWN, [FlxKey.fromString(downBind), FlxKey.DOWN]);
+		inline bindKeys(Control.LEFT, [FlxKey.fromString(leftBind), FlxKey.LEFT]);
+		inline bindKeys(Control.RIGHT, [FlxKey.fromString(rightBind), FlxKey.RIGHT]);
 		inline bindKeys(Control.ACCEPT, [Z, SPACE, ENTER]);
 		inline bindKeys(Control.BACK, [BACKSPACE, ESCAPE]);
 		inline bindKeys(Control.PAUSE, [P, ENTER, ESCAPE]);
-		inline bindKeys(Control.RESET, [FlxKey.fromString(FlxG.save.data.killBind)]);
-		inline bindKeys(Control.SPACEB, [FlxKey.fromString(FlxG.save.data.middleBind), FlxKey.SPACE]);
+		inline bindKeys(Control.RESET, [FlxKey.fromString(killBind)]);
+		inline bindKeys(Control.SPACEB, [FlxKey.fromString(middleBind), FlxKey.SPACE]);
 	}
 
 	function removeKeyboard()
