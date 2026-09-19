@@ -60,6 +60,13 @@ class StoryMenuState extends MusicBeatState
 	override function create()
 	{
 		#if web
+		// Start Story Mode music immediately while entering this state from a
+		// user action. Delaying playback until after async library loads can
+		// cause Chrome to block the music until another click.
+		if (FlxG.sound.music != null)
+			FlxG.sound.music.stop();
+		FlxG.sound.music = FlxG.sound.stream(Paths.musicStreamURL('storymodemenumusic'), 1, true, null, false);
+
 		// Both libraries may exist but still be unloaded. Explicitly wait for
 		// their asynchronous loads before creating Story Mode sprites.
 		if (!webAssetsReady)
@@ -105,9 +112,10 @@ class StoryMenuState extends MusicBeatState
 		}
 
 		#if web
-		if (FlxG.sound.music != null)
-			FlxG.sound.music.pause();
-		FlxG.sound.music = FlxG.sound.stream(Paths.musicStreamURL('storymodemenumusic'), 1, true, null, false);
+		// Music was started before async loading so the browser's user-activation
+		// window is preserved. Reuse it after the assets become ready.
+		if (FlxG.sound.music == null)
+			FlxG.sound.music = FlxG.sound.stream(Paths.musicStreamURL('storymodemenumusic'), 1, true, null, false);
 		#else
 		FlxG.sound.playMusic(Paths.music('storymodemenumusic'));
 		#end
