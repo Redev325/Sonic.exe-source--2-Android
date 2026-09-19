@@ -105,11 +105,9 @@ class MainMenuState extends MusicBeatState
 
 		PlayStateChangeables.nocheese = true;
 
-		if (FlxG.sound.music == null || !FlxG.sound.music.playing)
-		{
-			FlxG.sound.playMusic(Paths.music('MainMenuMusic'), 0, true);
+		FlxG.sound.playMusic(Paths.music('MainMenuMusic'), 0, true);
+		if (FlxG.sound.music != null)
 			FlxG.sound.music.fadeIn(5, 0, 0.7);
-		}
 
 		persistentUpdate = persistentDraw = true;
 
@@ -286,7 +284,7 @@ class MainMenuState extends MusicBeatState
 			});
 		}
 
-		if (FlxG.sound.music.volume < 0.8)
+		if (FlxG.sound.music != null && FlxG.sound.music.playing && FlxG.sound.music.volume < 0.8)
 		{
 			FlxG.sound.music.volume += 0.5 * FlxG.elapsed;
 		}
