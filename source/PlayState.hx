@@ -3294,6 +3294,21 @@ class PlayState extends MusicBeatState
 	}
 
 	var songStarted = false;
+	var activeSongMusic:FlxSound = null;
+	var audioSessionActive:Bool = true;
+
+	inline function setMusicVolumeSafe(value:Float):Void
+	{
+		var music = FlxG.sound.music;
+		if (music != null && music.playing)
+			music.volume = value;
+	}
+
+	inline function setVocalsVolumeSafe(value:Float):Void
+	{
+		if (vocals != null && vocals.playing)
+			vocals.volume = value;
+	}
 
 	function startSong():Void
 	{
@@ -3305,38 +3320,43 @@ class PlayState extends MusicBeatState
 		if (!paused)
 		{
 			#if web
-				if (FlxG.sound.music == null)
-				{
-					var instAsset = OpenFlAssets.getSound(Paths.inst(PlayState.SONG.song));
-					if (instAsset != null)
-						FlxG.sound.playMusic(instAsset, 1, false);
-					else
-						FlxG.sound.music = FlxG.sound.stream(Paths.instStreamURL(PlayState.SONG.song), 1, false, null, false);
-				}
+				// Always create a fresh instrument for this PlayState. Reusing a
+				// previous HTML5 FlxSound can leave a dead channel after retry.
+				var instAsset = OpenFlAssets.getSound(Paths.inst(PlayState.SONG.song));
+				if (instAsset != null)
+					FlxG.sound.playMusic(instAsset, 1, false);
 				else
-				{
-					FlxG.sound.music.volume = 1;
-					FlxG.sound.music.play();
-				}
+					FlxG.sound.music = FlxG.sound.stream(Paths.instStreamURL(PlayState.SONG.song), 1, false, null, false);
 			#else
 				FlxG.sound.playMusic(Paths.inst(PlayState.SONG.song), 1, false);
 			#end
 		}
 
-		if (FlxG.sound.music != null)
+		activeSongMusic = FlxG.sound.music;
+		if (activeSongMusic == null)
 		{
-			FlxG.sound.music.onComplete = function()
-			{
-				if (vocals != null)
-					vocals.volume = 0;
-				endSong();
-			}
+			trace('ERROR: instrument could not be created for ' + PlayState.SONG.song);
+			endSong();
+			return;
 		}
+
+		var songMusic = activeSongMusic;
+		songMusic.onComplete = function()
+		{
+			// Ignore completion events from an old/replaced song sound.
+			if (!audioSessionActive || songMusic != activeSongMusic || songMusic != FlxG.sound.music)
+				return;
+
+			if (vocals != null && vocals.playing)
+				vocals.stop();
+			endSong();
+		};
+
 		if (vocals != null)
 			vocals.play();
 
 		// Song duration in a float, useful for the time left feature
-		songLength = FlxG.sound.music.length;
+		songLength = songMusic.length;
 
 		if (FlxG.save.data.songPosition)
 		{
@@ -3943,10 +3963,11 @@ class PlayState extends MusicBeatState
 		if (vocals != null)
 			vocals.pause();
 
-		if (FlxG.sound.music != null)
+		var music = activeSongMusic;
+		if (music != null && music == FlxG.sound.music)
 		{
-			FlxG.sound.music.play();
-			Conductor.songPosition = FlxG.sound.music.time;
+			music.play();
+			Conductor.songPosition = music.time;
 			if (vocals != null)
 			{
 				vocals.time = Conductor.songPosition;
@@ -4509,7 +4530,7 @@ class PlayState extends MusicBeatState
 					}
 
 					if (dad.curCharacter == 'mom')
-						vocals.volume = 1;
+						setVocalsVolumeSafe(1);
 				}
 
 				if (PlayState.SONG.notes[Std.int(curStep / 16)].mustHitSection)
@@ -4615,7 +4636,7 @@ class PlayState extends MusicBeatState
 			switch (curBeat)
 			{
 				case 128, 129, 130:
-					vocals.volume = 0;
+					setVocalsVolumeSafe(0);
 					// FlxG.sound.music.stop();
 					// FlxG.switchState(new PlayState());
 			}
@@ -4922,7 +4943,7 @@ class PlayState extends MusicBeatState
 					dad.holdTimer = 0;
 
 					if (SONG.needsVoices)
-						vocals.volume = 1;
+						setVocalsVolumeSafe(1);
 
 					daNote.active = false;
 
@@ -4992,7 +5013,7 @@ class PlayState extends MusicBeatState
 							{
 								remove(daNoteStatic);
 							});
-							vocals.volume = 0;
+							setVocalsVolumeSafe(0);
 							FlxG.sound.play(Paths.sound('ring'), .7);
 						}
 						if (daNote.noteType == 1 || daNote.noteType == 0)
@@ -5001,7 +5022,7 @@ class PlayState extends MusicBeatState
 							{
 								if (curSong != 'black-sun' && cNum == 0)
 									health -= 0.075;
-								vocals.volume = 0;
+								setVocalsVolumeSafe(0);
 								if (theFunne)
 									noteMiss(daNote.noteData, daNote);
 							}
@@ -5009,7 +5030,7 @@ class PlayState extends MusicBeatState
 							{
 								if (curSong != 'black-sun' && cNum == 0)
 									0.075;
-								vocals.volume = 0;
+								setVocalsVolumeSafe(0);
 								if (theFunne)
 									noteMiss(daNote.noteData, daNote);
 							}
@@ -5083,10 +5104,26 @@ class PlayState extends MusicBeatState
 		#end
 
 		canPause = false;
-		FlxG.sound.music.volume = 0;
-		vocals.volume = 0;
-		FlxG.sound.music.pause();
-		vocals.pause();
+		audioSessionActive = false;
+
+		var endingMusic = activeSongMusic;
+		if (endingMusic != null)
+		{
+			endingMusic.onComplete = null;
+			FlxG.sound.defaultMusicGroup.remove(endingMusic);
+			if (endingMusic.playing)
+				endingMusic.stop();
+			if (FlxG.sound.music == endingMusic)
+				FlxG.sound.music = null;
+		}
+		activeSongMusic = null;
+
+		if (vocals != null)
+		{
+			vocals.onComplete = null;
+			if (vocals.playing)
+				vocals.stop();
+		}
 		if (SONG.validScore)
 		{
 			// adjusting the highscore song name to be compatible
@@ -5287,7 +5324,7 @@ class PlayState extends MusicBeatState
 		var noteDiff:Float = -(daNote.strumTime - Conductor.songPosition);
 		var wife:Float = EtternaFunctions.wife3(-noteDiff, Conductor.timeScale);
 		// boyfriend.playAnim('hey');
-		vocals.volume = 1;
+		setVocalsVolumeSafe(1);
 		var placement:String = Std.string(combo);
 
 		var coolText:FlxText = new FlxText(0, 0, 0, placement, 32);
@@ -5865,6 +5902,34 @@ class PlayState extends MusicBeatState
 		});
 	}
 
+	override function destroy():Void
+	{
+		audioSessionActive = false;
+
+		if (activeSongMusic != null)
+		{
+			activeSongMusic.onComplete = null;
+			FlxG.sound.defaultMusicGroup.remove(activeSongMusic);
+			if (activeSongMusic.playing)
+				activeSongMusic.stop();
+			if (FlxG.sound.music == activeSongMusic)
+				FlxG.sound.music = null;
+			activeSongMusic = null;
+		}
+
+		if (vocals != null)
+		{
+			vocals.onComplete = null;
+			if (vocals.playing)
+				vocals.stop();
+			FlxG.sound.list.remove(vocals, true);
+			vocals.destroy();
+			vocals = null;
+		}
+
+		super.destroy();
+	}
+
 	public function findByTime(time:Float):Array<Dynamic>
 	{
 		for (i in rep.replay.songNotes)
@@ -6289,7 +6354,7 @@ class PlayState extends MusicBeatState
 			});
 
 			note.wasGoodHit = true;
-			vocals.volume = 1;
+			setVocalsVolumeSafe(1);
 
 			note.kill();
 			notes.remove(note, true);
@@ -6408,7 +6473,7 @@ class PlayState extends MusicBeatState
 	override function stepHit()
 	{
 		super.stepHit();
-		if (FlxG.sound.music.time > Conductor.songPosition + 20 || FlxG.sound.music.time < Conductor.songPosition - 20)
+		if (FlxG.sound.music != null && FlxG.sound.music.playing && (FlxG.sound.music.time > Conductor.songPosition + 20 || FlxG.sound.music.time < Conductor.songPosition - 20))
 		{
 			resyncVocals();
 		}
