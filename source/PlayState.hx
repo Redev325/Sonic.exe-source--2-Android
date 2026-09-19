@@ -3873,14 +3873,6 @@ class PlayState extends MusicBeatState
 			if (PlayStateChangeables.Optimize)
 				babyArrow.x -= 275;
 
-			// Triple Trouble's Space/ring receptor occupies the fifth input
-			// lane's center slot between Down and Up. Center the wider ring
-			// artwork on that lane instead of applying a fixed pixel offset.
-			if (isRing && player == 1 && i == 2)
-			{
-				var ringLaneCenter = babyArrow.x + Note.swagWidth / 2;
-				babyArrow.x = ringLaneCenter - babyArrow.width / 2;
-			}
 
 			if (FlxG.save.data.midscroll && player == 1)
 				babyArrow.x -= 68.75 * deezNuts[ballsinyojaws];
@@ -3894,6 +3886,18 @@ class PlayState extends MusicBeatState
 
 			strumLineNotes.add(babyArrow);
 		}
+
+		// Triple Trouble uses five inputs: Left, Down, Ring(Space), Up, Right.
+		// The ring receptor must sit exactly in the missing middle slot.
+		if (isRing && player == 1 && playerStrums != null && playerStrums.members.length >= 4)
+		{
+			var downStrum = playerStrums.members[1];
+			var upStrum = playerStrums.members[3];
+			var ringStrum = playerStrums.members[2];
+			var targetCenterX = ((downStrum.x + downStrum.width * 0.5) + (upStrum.x + upStrum.width * 0.5)) * 0.5;
+			ringStrum.x = targetCenterX - ringStrum.width * 0.5;
+		}
+
 	}
 
 
@@ -4985,10 +4989,11 @@ class PlayState extends MusicBeatState
 					}
 
 						// Ring notes use a wider sprite than the receptor. Match centers.
-						if (isRing && daNote.noteData == 2 && playerStrums.members.length > 2)
+						if (isRing && daNote.noteData == 2 && playerStrums.members.length >= 4)
 						{
 							var ringStrumForNote = playerStrums.members[2];
-							daNote.x = ringStrumForNote.x + (ringStrumForNote.width - daNote.width) / 2;
+							var ringCenterX = ringStrumForNote.x + ringStrumForNote.width * 0.5;
+							daNote.x = ringCenterX - daNote.width * 0.5;
 						}
 					else if (!daNote.wasGoodHit && !daNote.modifiedByLua)
 					{
@@ -5961,16 +5966,13 @@ class PlayState extends MusicBeatState
 			// different dimensions. Always anchor that receptor to the fixed
 			// middle-lane center so neither the receptor nor incoming ring notes
 			// jump when the press/confirm animation changes frame size.
-			if (isRing && spr.ID == 2)
+			if (isRing && spr.ID == 2 && playerStrums.members.length >= 4)
 			{
-				var ringLaneCenterX:Float = strumLine.x + Note.swagWidth * 2 + Note.swagWidth / 2
-					+ 50 + (FlxG.width / 2);
-				if (PlayStateChangeables.Optimize)
-					ringLaneCenterX -= 275;
-
-				var ringLaneCenterY:Float = strumLine.y + Note.swagWidth / 2;
-				spr.x = ringLaneCenterX - spr.width / 2;
-				spr.y = ringLaneCenterY - spr.height / 2;
+				var downStrum = playerStrums.members[1];
+				var upStrum = playerStrums.members[3];
+				var targetCenterX = ((downStrum.x + downStrum.width * 0.5) + (upStrum.x + upStrum.width * 0.5)) * 0.5;
+				spr.x = targetCenterX - spr.width * 0.5;
+				spr.y = strumLine.y + (Note.swagWidth - spr.height) * 0.5;
 			}
 		});
 	}
