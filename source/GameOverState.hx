@@ -94,14 +94,14 @@ class GameOverState extends FlxTransitionableState
 				pressed = true;
 		}
 
-		pressed = false;
 
 		if (pressed && !fading)
 		{
 			fading = true;
 			FlxG.sound.music.fadeOut(0.5, 0, function(twn:FlxTween)
 			{
-				FlxG.sound.music.stop();
+				if (FlxG.sound.music != null)
+					FlxG.sound.music.pause();
 				LoadingState.loadAndSwitchState(new PlayState());
 			});
 		}
