@@ -24,6 +24,13 @@ import Discord.DiscordClient;
 
 class StoryMenuState extends MusicBeatState
 {
+	#if web
+	static var webAssetsReady:Bool = false;
+	static var webAssetsLoading:Bool = false;
+	#end
+
+	var webStateReady:Bool = false;
+
 	var ezbg:FlxSprite;
 
 	var sprDifficulty:FlxSprite;
@@ -53,34 +60,30 @@ class StoryMenuState extends MusicBeatState
 	override function create()
 	{
 		#if web
-		// Story Mode uses both the normal preload UI assets and the Sonic.EXE
-		// library. Ensure both are ready before constructing any sprites.
-		if (Assets.getLibrary('preload') == null || Assets.getLibrary('exe') == null)
+		// Both libraries may exist but still be unloaded. Explicitly wait for
+		// their asynchronous loads before creating Story Mode sprites.
+		if (!webAssetsReady)
 		{
-			function loadExe()
+			if (!webAssetsLoading)
 			{
-				Assets.loadLibrary('exe').onComplete(function(_)
-				{
-					FlxG.switchState(new StoryMenuState());
-				}).onError(function(error)
-				{
-					trace('Failed to load exe library for story menu: ' + error);
-				});
-			}
-
-			if (Assets.getLibrary('preload') == null)
-			{
+				webAssetsLoading = true;
 				Assets.loadLibrary('preload').onComplete(function(_)
 				{
-					loadExe();
+					Assets.loadLibrary('exe').onComplete(function(_)
+					{
+						webAssetsReady = true;
+						webAssetsLoading = false;
+						FlxG.switchState(new StoryMenuState());
+					}).onError(function(error)
+					{
+						webAssetsLoading = false;
+						trace('Failed to load exe library for story menu: ' + error);
+					});
 				}).onError(function(error)
 				{
+					webAssetsLoading = false;
 					trace('Failed to load preload library for story menu: ' + error);
 				});
-			}
-			else
-			{
-				loadExe();
 			}
 			return;
 		}
@@ -203,6 +206,7 @@ class StoryMenuState extends MusicBeatState
 		addVirtualPad(FULL, A_B);
 		#end
 
+		webStateReady = true;
 		super.create();
 	}
 
@@ -276,6 +280,11 @@ class StoryMenuState extends MusicBeatState
 
 	override public function update(elapsed:Float)
 	{
+		#if web
+		if (!webStateReady || leftArrow == null || rightArrow == null)
+			return;
+		#end
+
 		if (controls.LEFT && oneclickpls)
 			leftArrow.animation.play('press');
 		else
