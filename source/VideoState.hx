@@ -25,6 +25,7 @@ class VideoState extends MusicBeatState
 	public var nextState:FlxState;
 
 	var text:FlxText;
+	var closing:Bool = false;
 
 	#if web
 	var video:VideoElement;
@@ -93,6 +94,13 @@ class VideoState extends MusicBeatState
 	public override function update(dt:Float)
 	{
 		#if web
+		// Press Enter to skip the transition/cutscene immediately.
+		if (!closing && FlxG.keys.justPressed.ENTER)
+		{
+			onClose();
+			return;
+		}
+
 		if (video != null && video.paused && controls.ACCEPT)
 			video.play();
 		#end
@@ -106,6 +114,9 @@ class VideoState extends MusicBeatState
 
 	function onClose()
 	{
+		if (closing)
+			return;
+		closing = true;
 		text.alpha = 0;
 		trace('close!');
 		trace(nextState);
