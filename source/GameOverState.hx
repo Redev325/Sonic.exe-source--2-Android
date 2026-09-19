@@ -72,7 +72,8 @@ class GameOverState extends FlxTransitionableState
 			restart.antialiasing = true;
 			add(restart);
 
-		FlxG.sound.music.fadeOut(2, FlxG.sound.music.volume * 0.6);
+		if (FlxG.sound.music != null)
+			FlxG.sound.music.fadeOut(2, FlxG.sound.music.volume * 0.6);
 
 		FlxTween.tween(restart, {alpha: 1}, 1, {ease: FlxEase.quartInOut});
 		FlxTween.tween(restart, {y: restart.y + 40}, 7, {ease: FlxEase.quartInOut, type: PINGPONG});
@@ -98,12 +99,17 @@ class GameOverState extends FlxTransitionableState
 		if (pressed && !fading)
 		{
 			fading = true;
-			FlxG.sound.music.fadeOut(0.5, 0, function(twn:FlxTween)
+			if (FlxG.sound.music != null)
 			{
-				if (FlxG.sound.music != null)
-					FlxG.sound.music.pause();
+				FlxG.sound.music.fadeOut(0.5, 0, function(twn:FlxTween)
+				{
+					if (FlxG.sound.music != null)
+						FlxG.sound.music.pause();
+					LoadingState.loadAndSwitchState(new PlayState());
+				});
+			}
+			else
 				LoadingState.loadAndSwitchState(new PlayState());
-			});
 		}
 		super.update(elapsed);
 	}
