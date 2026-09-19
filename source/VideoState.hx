@@ -4,6 +4,7 @@ import flixel.text.FlxText;
 import flixel.FlxState;
 import flixel.FlxG;
 import flixel.FlxSubState;
+import openfl.Assets;
 
 #if !web
 import extension.webview.WebView;
@@ -120,7 +121,22 @@ class VideoState extends MusicBeatState
 		}
 		#end
 
+		#if web
+		// The Sonic.EXE main menu uses the legacy preload library for its
+		// background, menu sprites, and menu music. We disabled OpenFL's
+		// automatic asset preload, so explicitly load it before entering
+		// MainMenuState.
+		Assets.loadLibrary('preload').onComplete(function(_)
+		{
+			FlxG.switchState(nextState);
+		}).onError(function(error)
+		{
+			trace('Failed to load preload library before next state: ' + error);
+			FlxG.switchState(nextState);
+		});
+		#else
 		FlxG.switchState(nextState);
+		#end
 	}
 
 	#if !web
