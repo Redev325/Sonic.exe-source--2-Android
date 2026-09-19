@@ -399,13 +399,7 @@ class GameOverSubstate extends MusicBeatSubstate
 
 	function playMusicSafe(key:String, volume:Float = 1, loop:Bool = true):Void
 	{
-		#if web
-			if (FlxG.sound.music != null)
-				FlxG.sound.music.pause();
-			FlxG.sound.music = FlxG.sound.stream(Paths.musicStreamURL(key), volume, loop, null, false);
-		#else
-			FlxG.sound.playMusic(Paths.music(key), volume, loop);
-		#end
+		FlxG.sound.playMusic(Paths.music(key), volume, loop);
 	}
 
 	function playVoiceLine(path:String,

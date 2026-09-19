@@ -175,7 +175,10 @@ checkLoadSong(getSongPath());
 		Paths.setCurrentLevel('exe');
 		#if NO_PRELOAD_ALL
 #if web
-		var loaded = isLibraryLoaded("shared") && isLibraryLoaded("exe");
+		var loaded = isSoundLoaded(getSongPath())
+			&& (!PlayState.SONG.needsVoices || isSoundLoaded(getVocalPath()))
+			&& isLibraryLoaded("shared")
+			&& isLibraryLoaded("exe");
 		#else
 		var loaded = isSoundLoaded(getSongPath())
 			&& (!PlayState.SONG.needsVoices || isSoundLoaded(getVocalPath()))

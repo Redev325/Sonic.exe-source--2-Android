@@ -107,15 +107,8 @@ class MainMenuState extends MusicBeatState
 
 		if (FlxG.sound.music == null || !FlxG.sound.music.playing)
 		{
-			#if web
-			// Browser audio is asynchronous, so stream the menu music instead of
-			// asking OpenFL for a synchronously available asset.
-			FlxG.sound.music = FlxG.sound.stream(Paths.musicStreamURL('MainMenuMusic'), 0, true, null, false);
-			FlxG.sound.music.persist = true;
+			FlxG.sound.playMusic(Paths.music('MainMenuMusic'), 0, true);
 			FlxG.sound.music.fadeIn(5, 0, 0.7);
-			#else
-			FlxG.sound.playMusic(Paths.music('MainMenuMusic'));
-			#end
 		}
 
 		persistentUpdate = persistentDraw = true;

@@ -133,13 +133,7 @@ class SoundTestMenu extends MusicBeatState
 
 	function playMusicSafe(key:String):Void
 	{
-		#if web
-			if (FlxG.sound.music != null)
-				FlxG.sound.music.pause();
-			FlxG.sound.music = FlxG.sound.stream(Paths.musicStreamURL(key), 1, true, null, false);
-		#else
-			FlxG.sound.playMusic(Paths.music(key), 1, true);
-		#end
+		FlxG.sound.playMusic(Paths.music(key), 1, true);
 	}
 
 	function changeNumber(selection:Int) 

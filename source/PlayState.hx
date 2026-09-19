@@ -503,9 +503,19 @@ class PlayState extends MusicBeatState
 				preloaded = true;
 			}
 			#if web
-			// Prime the browser stream without leaving it playing during state setup.
-			FlxG.sound.music = FlxG.sound.stream(Paths.instStreamURL(PlayState.SONG.song), 0, false, null, false);
-			FlxG.sound.music.pause();
+			// LoadingState preloads the current song on HTML5. Use the decoded asset
+			// as the real music object so pause/resume and state cleanup work normally.
+			var instAsset = OpenFlAssets.getSound(Paths.inst(PlayState.SONG.song));
+			if (instAsset != null)
+			{
+				FlxG.sound.playMusic(instAsset, 0, false);
+				FlxG.sound.music.pause();
+			}
+			else
+			{
+				FlxG.sound.music = FlxG.sound.stream(Paths.instStreamURL(PlayState.SONG.song), 0, false, null, false);
+				FlxG.sound.music.pause();
+			}
 			#else
 			FlxG.sound.playMusic(Paths.inst(PlayState.SONG.song), 0, false);
 			#end
@@ -3296,11 +3306,17 @@ class PlayState extends MusicBeatState
 		{
 			#if web
 				if (FlxG.sound.music == null)
-					FlxG.sound.music = FlxG.sound.stream(Paths.instStreamURL(PlayState.SONG.song), 1, false, null, false);
+				{
+					var instAsset = OpenFlAssets.getSound(Paths.inst(PlayState.SONG.song));
+					if (instAsset != null)
+						FlxG.sound.playMusic(instAsset, 1, false);
+					else
+						FlxG.sound.music = FlxG.sound.stream(Paths.instStreamURL(PlayState.SONG.song), 1, false, null, false);
+				}
 				else
 				{
 					FlxG.sound.music.volume = 1;
-					FlxG.sound.music.play(true);
+					FlxG.sound.music.play();
 				}
 			#else
 				FlxG.sound.playMusic(Paths.inst(PlayState.SONG.song), 1, false);
@@ -4135,7 +4151,7 @@ class PlayState extends MusicBeatState
 
 		scoreTxt.x = (originalX - (lengthInPx / 2)) + 335;
 
-		if (controls.PAUSE #if android || FlxG.android.justReleased.BACK #end && startedCountdown && canPause)
+		if ((controls.PAUSE || FlxG.keys.justPressed.ENTER) #if android || FlxG.android.justReleased.BACK #end && startedCountdown && canPause)
 		{
 			persistentUpdate = false;
 			persistentDraw = true;
