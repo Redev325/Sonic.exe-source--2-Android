@@ -49,7 +49,7 @@ class SoundTestMenu extends MusicBeatState
         {
 			new FlxTimer().start(0.1, function(tmr:FlxTimer)
 				{
-					FlxG.sound.playMusic(Paths.music('breakfast'));
+					playMusicSafe('breakfast');
 				});
 		
 			whiteshit = new FlxSprite().makeGraphic(1280, 720, FlxColor.WHITE);
@@ -59,7 +59,6 @@ class SoundTestMenu extends MusicBeatState
 			cameoImg = new FlxSprite();
 			cameoThanks = new FlxSprite();
 
-			FlxG.sound.music.stop();
 
 			var bg:FlxSprite = new FlxSprite(-100).loadGraphic(Paths.image('backgroundST'));
 			bg.scrollFactor.x = 0;
@@ -130,7 +129,19 @@ class SoundTestMenu extends MusicBeatState
 			#end
 
 			
+			super.create();
         }
+
+	function playMusicSafe(key:String):Void
+	{
+		#if web
+			if (FlxG.sound.music != null)
+				FlxG.sound.music.pause();
+			FlxG.sound.music = FlxG.sound.stream(Paths.musicStreamURL(key), 1, true, null, false);
+		#else
+			FlxG.sound.playMusic(Paths.music(key), 1, true);
+		#end
+	}
 
 	function changeNumber(selection:Int) 
 	{
@@ -287,7 +298,7 @@ class SoundTestMenu extends MusicBeatState
 			});
 			new FlxTimer().start(2.1, function(tmr:FlxTimer)
 			{
-				FlxG.sound.playMusic(Paths.music('cameostuff/Razencro'));	
+				playMusicSafe('cameostuff/Razencro');	
 				incameo = true;
 			});
 		}
@@ -376,7 +387,7 @@ class SoundTestMenu extends MusicBeatState
 			});
 			new FlxTimer().start(2.1, function(tmr:FlxTimer)
 			{
-				FlxG.sound.playMusic(Paths.music('cameostuff/Marstarbro'));	
+				playMusicSafe('cameostuff/Marstarbro');	
 				incameo = true;
 			});
 		}
