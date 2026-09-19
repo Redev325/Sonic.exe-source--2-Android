@@ -6243,10 +6243,11 @@ class PlayState extends MusicBeatState
 			if (playerStrums != null && playerStrums.members.length > 2)
 			{
 				var ringStrum = playerStrums.members[2];
+				// Do not resize after switching to the larger confirm frame.
+				// setGraphicSize() here permanently changed the sprite scale,
+				// making the normal ring receptor smaller after a hit.
 				ringStrum.animation.play('confirm', true);
-				ringStrum.setGraphicSize(RING_STRUM_SIZE);
 				ringStrum.updateHitbox();
-				FlxTween.tween(ringStrum.scale, {x: ringStrum.scale.x, y: ringStrum.scale.y}, 0.12);
 			}
 		}
 
