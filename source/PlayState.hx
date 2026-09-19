@@ -4016,6 +4016,10 @@ class PlayState extends MusicBeatState
 		if (isRing)
 			counterNum.text = Std.string(cNum);
 
+		// Use FlxG's keyboard state as a second HTML5 Space-key path for rings.
+		if (isRing && FlxG.keys.justPressed.SPACE)
+			tryRingKeyboardHit();
+
 		if ((FlxG.keys.justPressed.SPACE || controls.ACCEPT || (_vpad != null && _vpad.buttonA.justPressed) || FlxG.keys.anyJustPressed([FlxKey.fromString(FlxG.save.data.dodgeBind)])) && canDodge) //This looks like sus
 		{
 			dodging = true;
@@ -5663,6 +5667,33 @@ class PlayState extends MusicBeatState
 	var rightHold:Bool = false;
 	var leftHold:Bool = false;
 
+	// HTML5-safe fallback for Triple Trouble's dedicated ring/Space lane.
+	// Some browsers do not consistently deliver the stage KeyboardEvent for Space,
+	// while FlxG.keys still receives the key state.
+	private function tryRingKeyboardHit():Void
+	{
+		if (!isRing || paused || PlayStateChangeables.botPlay || loadRep || !generatedMusic)
+			return;
+
+		var ringNote:Note = null;
+		notes.forEachAlive(function(daNote:Note)
+		{
+			if (ringNote == null
+				&& daNote.noteData == 2
+				&& daNote.mustPress
+				&& !daNote.isSustainNote
+				&& daNote.canBeHit
+				&& !daNote.tooLate
+				&& !daNote.wasGoodHit)
+			{
+				ringNote = daNote;
+			}
+		});
+
+		if (ringNote != null)
+			goodNoteHit(ringNote);
+	}
+
 	// THIS FUNCTION JUST FUCKS WIT HELD NOTES AND BOTPLAY/REPLAY (also gamepad shit)
 
 	private function keyShit():Void // I've invested in emma stocks
@@ -6200,6 +6231,15 @@ class PlayState extends MusicBeatState
 		{
 			FlxG.sound.play(Paths.sound('Ring', 'exe'));
 			cNum += 1;
+
+			// Explicitly confirm/pulse the gold ring lane so the hit is visible in HTML5.
+			if (playerStrums != null && playerStrums.members.length > 2)
+			{
+				var ringStrum = playerStrums.members[2];
+				ringStrum.animation.play('confirm', true);
+				ringStrum.scale.set(1.08, 1.08);
+				FlxTween.tween(ringStrum.scale, {x: 1, y: 1}, 0.12);
+			}
 		}
 
 		if (note.noteType == 3)
