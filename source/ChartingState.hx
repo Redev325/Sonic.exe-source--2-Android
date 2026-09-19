@@ -41,6 +41,10 @@ using StringTools;
 
 class ChartingState extends MusicBeatState
 {
+	// State to return to when leaving the chart editor.
+	// PlayState sets this when the editor is opened from gameplay.
+	public static var returnTo:String = "menu";
+
 	var _file:FileReference;
 
 	public var playClaps:Bool = false;
@@ -549,7 +553,7 @@ class ChartingState extends MusicBeatState
 	function loadSong(daSong:String):Void
 	{
 		if (FlxG.sound.music != null)
-			FlxG.sound.music.stop();
+			FlxG.sound.music.pause();
 
 		if (vocals == null)
 			vocals = new FlxSound();
@@ -715,6 +719,14 @@ class ChartingState extends MusicBeatState
 
 	override function update(elapsed:Float)
 	{
+		// Backspace/Escape exits the editor. Avoid using Backspace while the
+		// song-name text box has focus, where it should remain a text-edit key.
+		if (FlxG.keys.justPressed.ESCAPE || (controls.BACK && (typingShit == null || !typingShit.hasFocus)))
+		{
+			exitEditor();
+			return;
+		}
+
 		updateHeads();
 
 		snapText.text = "Snap: 1/" + snap + " (" + (doSnapShit ? "Control to disable" : "Snap Disabled, Control to renable") + ")\nAdd Notes: 1-8 (or click)\n";
@@ -953,8 +965,10 @@ class ChartingState extends MusicBeatState
 			lastSection = curSection;
 			
 			PlayState.SONG = _song;
-			FlxG.sound.music.stop();
-			vocals.stop();
+			if (FlxG.sound.music != null)
+				FlxG.sound.music.pause();
+			if (vocals != null)
+				vocals.pause();
 			LoadingState.loadAndSwitchState(new PlayState());
 		}
 
@@ -1572,6 +1586,26 @@ class ChartingState extends MusicBeatState
 			"song": _song
 		});
 		FlxG.save.flush();
+	}
+
+	function exitEditor():Void
+	{
+		if (FlxG.sound.music != null)
+			FlxG.sound.music.pause();
+		if (vocals != null)
+			vocals.pause();
+
+		claps.splice(0, claps.length);
+
+		switch (returnTo)
+		{
+			case "freeplay":
+				FlxG.switchState(new FreeplayState());
+			case "story":
+				FlxG.switchState(new StoryMenuState());
+			default:
+				FlxG.switchState(new MainMenuState());
+		}
 	}
 
 	private function saveLevel()
