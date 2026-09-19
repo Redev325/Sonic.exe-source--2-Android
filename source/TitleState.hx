@@ -108,9 +108,17 @@ class TitleState extends MusicBeatState
 		FlxG.switchState(new ChartingState());
 		#else
 		#if web
-		new FlxTimer().start(0.1, function(tmr:FlxTimer)
+		// HTML5 disables OpenFL's automatic library preloader. Load only the
+		// lightweight title-screen library before creating Sonic.EXE's title UI.
+		Assets.loadLibrary('title').onComplete(function(_)
 		{
-			startIntro();
+			new FlxTimer().start(0.1, function(tmr:FlxTimer)
+			{
+				startIntro();
+			});
+		}).onError(function(error)
+		{
+			trace("Failed to load title library: " + error);
 		});
 		#else
 		new FlxTimer().start(0.1, function(tmr:FlxTimer)
