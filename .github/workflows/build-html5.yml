@@ -65,6 +65,17 @@ jobs:
       - name: Build HTML5
         run: haxelib run lime build html5 -release -v -D disable_preloader_assets
 
+      - name: Optimize HTML5 PNG assets
+        shell: bash
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y pngquant
+          find export/release/html5/bin/assets -type f -name '*.png' -size +512k -print0 | while IFS= read -r -d '' file; do
+            pngquant --quality=70-90 --speed=1 --skip-if-larger --force --ext .png "$file" >/dev/null 2>&1 || true
+          done
+          echo "Optimized PNG assets:"
+          find export/release/html5/bin/assets -type f -name '*.png' -printf '%s %p\\n' | sort -nr | head -20 || true
+
       - name: Inspect generated HTML5 startup files
         shell: bash
         run: |
