@@ -30,6 +30,7 @@ class MainMenuState extends MusicBeatState
 	#if web
 	static var webPreloadReady:Bool = false;
 	static var webPreloadLoading:Bool = false;
+	var webPreloadWaiting:Bool = false;
 	#end
 
 	var curSelected:Int = 0;
@@ -74,6 +75,7 @@ class MainMenuState extends MusicBeatState
 		// finish loading the preload library first.
 		if (!webPreloadReady)
 		{
+			webPreloadWaiting = true;
 			if (!webPreloadLoading)
 			{
 				webPreloadLoading = true;
@@ -227,6 +229,11 @@ class MainMenuState extends MusicBeatState
 
 	override function update(elapsed:Float)
 	{
+		#if web
+		if (webPreloadWaiting)
+			return;
+		#end
+
 		#if debug
 		if (FlxG.keys.justPressed.R)
 		{
