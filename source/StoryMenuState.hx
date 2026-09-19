@@ -104,7 +104,7 @@ class StoryMenuState extends MusicBeatState
 				songArray = ['too-slow', 'you-cant-run', 'triple-trouble'];
 		}
 
-		FlxG.sound.playMusic(Paths.music('storymodemenumusic'));
+		FlxG.sound.playMusic(Paths.music('storymodemenumusic', 'title'));
 
 		var bg:FlxSprite;
 
