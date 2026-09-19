@@ -721,7 +721,7 @@ class ChartingState extends MusicBeatState
 	{
 		// Backspace/Escape exits the editor. Avoid using Backspace while the
 		// song-name text box has focus, where it should remain a text-edit key.
-		if (FlxG.keys.justPressed.ESCAPE || (controls.BACK && (typingShit == null || !typingShit.hasFocus)))
+		if (FlxG.keys.justPressed.ESCAPE || FlxG.keys.justPressed.BACKSPACE || (controls.BACK && (typingShit == null || !typingShit.hasFocus)))
 		{
 			exitEditor();
 			return;
