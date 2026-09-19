@@ -47,10 +47,9 @@ class SoundTestMenu extends MusicBeatState
 
     override function create()
         {
-			new FlxTimer().start(0.1, function(tmr:FlxTimer)
-				{
-					playMusicSafe('breakfast');
-				});
+			// Start immediately. A timer can move playback outside the browser's
+			// user-activation window and make the music wait for another click.
+			playMusicSafe('breakfast');
 		
 			whiteshit = new FlxSprite().makeGraphic(1280, 720, FlxColor.WHITE);
 			whiteshit.alpha = 0;
