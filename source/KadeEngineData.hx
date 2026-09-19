@@ -9,12 +9,9 @@ class KadeEngineData
 		if (FlxG.save.data.songArray == null || FlxG.save.data.songArray.length == 0)
 			FlxG.save.data.songArray = ["endless", "cycles", "milk", "sunshine", "faker", "black-sun", "chaos"];
 		
-		if (FlxG.save.data.storyProgress == null) // Data erase fuck you.
-		{
-			FlxG.save.data.storyProgress = 0;
-			FlxG.save.data.soundTestUnlocked = true;
-			
-		}
+		// HTML5 build starts with all Sonic.EXE story songs unlocked.
+		FlxG.save.data.storyProgress = 2;
+		FlxG.save.data.soundTestUnlocked = true;
 
 		if (FlxG.save.data.lq == null)
 			FlxG.save.data.lq = false;
