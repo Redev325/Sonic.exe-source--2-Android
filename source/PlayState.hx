@@ -5064,9 +5064,6 @@ class PlayState extends MusicBeatState
 			});
 		}
 
-		if (isRing && FlxG.keys.justPressed.SPACE)
-			tryRingKeyboardHit();
-
 		if (!inCutscene)
 			keyShit();
 
