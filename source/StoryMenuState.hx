@@ -69,15 +69,23 @@ class StoryMenuState extends MusicBeatState
 				webAssetsLoading = true;
 				Assets.loadLibrary('preload').onComplete(function(_)
 				{
-					Assets.loadLibrary('exe').onComplete(function(_)
+					// Boyfriend's Story Mode sprite lives in the shared library.
+					Assets.loadLibrary('shared').onComplete(function(_)
 					{
-						webAssetsReady = true;
-						webAssetsLoading = false;
-						FlxG.switchState(new StoryMenuState());
+						Assets.loadLibrary('exe').onComplete(function(_)
+						{
+							webAssetsReady = true;
+							webAssetsLoading = false;
+							FlxG.switchState(new StoryMenuState());
+						}).onError(function(error)
+						{
+							webAssetsLoading = false;
+							trace('Failed to load exe library for story menu: ' + error);
+						});
 					}).onError(function(error)
 					{
 						webAssetsLoading = false;
-						trace('Failed to load exe library for story menu: ' + error);
+						trace('Failed to load shared library for story menu: ' + error);
 					});
 				}).onError(function(error)
 				{
