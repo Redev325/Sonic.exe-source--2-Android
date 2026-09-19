@@ -72,6 +72,9 @@ class TitleState extends MusicBeatState
 
 		trace("TitleState create()");
 
+		// Bind the HTML5/browser save store before Controls reads any keybinds.
+		FlxG.save.bind('funkin', 'ninjamuffin99');
+
 		PlayerSettings.init();
 
 		#if windows
@@ -85,9 +88,8 @@ class TitleState extends MusicBeatState
 
 		trace('hello');
 
-		// Bind and initialize persistent data before MusicBeatState.create()
+		// Initialize the remaining persistent settings before MusicBeatState.create()
 		// accesses FPS/input settings.
-		FlxG.save.bind('funkin', 'ninjamuffin99');
 		KadeEngineData.initSave();
 		Highscore.load();
 
@@ -197,7 +199,7 @@ class TitleState extends MusicBeatState
 		gfDance.animation.addByIndices('danceRight', 'gfDance', [15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29], "", 24, false);
 		gfDance.antialiasing = true;
 		add(gfDance); */
-		add(logoBl);
+		// logoBl is a legacy Kade Engine sprite and is intentionally not used here.
 
 		titleText = new FlxSprite(0, 0);
 		titleText.frames = Paths.getSparrowAtlas('titleEnterNEW', 'title');
