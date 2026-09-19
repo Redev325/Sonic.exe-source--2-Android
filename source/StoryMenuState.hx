@@ -286,6 +286,13 @@ class StoryMenuState extends MusicBeatState
 		}
 	}
 
+		#if web
+		// Stop the streamed Main Menu music before Story Mode begins so it cannot
+		// remain active into the song.
+		if (FlxG.sound.music != null)
+			FlxG.sound.music.stop();
+		#end
+
 	override public function update(elapsed:Float)
 	{
 		#if web
