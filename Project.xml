@@ -83,6 +83,12 @@
 	<assets path="assets/deferred" library="deferred" exclude="*.ogg" if="web"/>
 	<assets path="assets/deferred" library="deferred" exclude="*.mp3" unless="web"/>
 	<assets path="assets/title" library="title"/>
+	<!-- Small audio assets used during the title/startup flow are duplicated into
+	     the title library so they never require a synchronous lookup of an
+	     asynchronously loaded preload/shared library. -->
+	<assets path="assets/shared/sounds/boop1.ogg" library="title" />
+	<assets path="assets/shared/sounds/boop2.ogg" library="title" />
+	<assets path="assets/preload/sounds/confirmMenu.ogg" library="title" />
 	<!-- Story Mode menu music is loaded with the title library so it is ready before the Story Mode click. -->
 	<assets path="assets/preload/music/storymodemenumusic.ogg" library="title" />
 
