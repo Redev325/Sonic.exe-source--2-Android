@@ -544,7 +544,7 @@ class PlayState extends MusicBeatState
 			(cast(Lib.current.getChildAt(0), Main)).setFPSCap(800);
 
 		if (FlxG.sound.music != null)
-			FlxG.sound.music.stop();
+			FlxG.sound.music.pause();
 
 		if (!isStoryMode)
 		{
@@ -4594,7 +4594,8 @@ class PlayState extends MusicBeatState
 			persistentDraw = false;
 			paused = true;
 
-			vocals.stop();
+			if (vocals != null)
+				vocals.pause();
 			FlxG.sound.music.stop();
 
 			openSubState(new GameOverSubstate(boyfriend.getScreenPosition().x, boyfriend.getScreenPosition().y));
@@ -4627,7 +4628,8 @@ class PlayState extends MusicBeatState
 				persistentDraw = false;
 				paused = true;
 
-				vocals.stop();
+				if (vocals != null)
+				vocals.pause();
 				FlxG.sound.music.stop();
 
 				openSubState(new GameOverSubstate(boyfriend.getScreenPosition().x, boyfriend.getScreenPosition().y));
@@ -5069,7 +5071,13 @@ class PlayState extends MusicBeatState
 
 		if (offsetTesting)
 		{
+#if web
+			if (FlxG.sound.music != null)
+				FlxG.sound.music.pause();
+			FlxG.sound.music = FlxG.sound.stream(Paths.musicStreamURL('freakyMenu'), 1, true, null, false);
+#else
 			FlxG.sound.playMusic(Paths.music('freakyMenu'));
+#end
 			offsetTesting = false;
 			PlayStateChangeables.nocheese = true;
 			LoadingState.loadAndSwitchState(new OptionsMenu());
@@ -5093,7 +5101,8 @@ class PlayState extends MusicBeatState
 					paused = true;
 
 					FlxG.sound.music.stop();
-					vocals.stop();
+					if (vocals != null)
+				vocals.pause();
 
 					isList = false;
 
@@ -5186,7 +5195,8 @@ class PlayState extends MusicBeatState
 				paused = true;
 
 				FlxG.sound.music.stop();
-				vocals.stop();
+				if (vocals != null)
+				vocals.pause();
 
 				PlayStateChangeables.nocheese = true;
 				switch (curSong)
