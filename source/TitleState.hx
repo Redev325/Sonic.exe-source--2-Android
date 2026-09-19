@@ -70,12 +70,7 @@ class TitleState extends MusicBeatState
 			sys.FileSystem.createDirectory(#if android Main.path #else Sys.getCwd() #end + "/assets/replays");
 		#end
 
-		@:privateAccess
-		{
-			var startupLibrary = #if web openfl.Assets.getLibrary("preload") #else openfl.Assets.getLibrary("default") #end;
-			if (startupLibrary != null)
-				trace("Loaded startup assets: " + startupLibrary.assetsLoaded);
-		}
+		trace("TitleState create()");
 
 		PlayerSettings.init();
 

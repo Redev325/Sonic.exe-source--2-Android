@@ -170,9 +170,10 @@ class Main extends Sprite
 
 		
 		//#if !mobile
+		#if !web
 		fpsCounter = new FPS(10, 3, 0xFFFFFF);
 		addChild(fpsCounter);
-		toggleFPS(FlxG.save != null && FlxG.save.data != null && FlxG.save.data.fps == true);
+		#end
 
 		//#end
 	}
@@ -199,12 +200,14 @@ class Main extends Sprite
 		}
 
 	public function toggleFPS(fpsEnabled:Bool):Void {
-		fpsCounter.visible = fpsEnabled;
+		if (fpsCounter != null)
+			fpsCounter.visible = fpsEnabled;
 	}
 
 	public function changeFPSColor(color:FlxColor)
 	{
-		fpsCounter.textColor = color;
+		if (fpsCounter != null)
+			fpsCounter.textColor = color;
 	}
 
 	public function setFPSCap(cap:Float)
@@ -219,6 +222,6 @@ class Main extends Sprite
 
 	public function getFPS():Float
 	{
-		return fpsCounter.currentFPS;
+		return fpsCounter != null ? fpsCounter.currentFPS : 0;
 	}
 }
