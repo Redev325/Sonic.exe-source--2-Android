@@ -3289,7 +3289,17 @@ class PlayState extends MusicBeatState
 
 		if (!paused)
 		{
-					FlxG.sound.playMusic(Paths.inst(PlayState.SONG.song), 1, false);
+			#if web
+				if (FlxG.sound.music == null)
+					FlxG.sound.music = FlxG.sound.stream(Paths.instStreamURL(PlayState.SONG.song), 1, false, null, false);
+				else
+				{
+					FlxG.sound.music.volume = 1;
+					FlxG.sound.music.play(true);
+				}
+			#else
+				FlxG.sound.playMusic(Paths.inst(PlayState.SONG.song), 1, false);
+			#end
 		}
 
 		FlxG.sound.music.onComplete = function() // skill issue + ratio + blocked + didn't ask.
@@ -3297,7 +3307,8 @@ class PlayState extends MusicBeatState
 			vocals.volume = 0;
 			endSong();
 		}
-		vocals.play();
+		if (vocals != null)
+			vocals.play();
 
 		// Song duration in a float, useful for the time left feature
 		songLength = FlxG.sound.music.length;
@@ -4115,6 +4126,7 @@ class PlayState extends MusicBeatState
 
 		if (FlxG.keys.justPressed.SEVEN)
 		{
+			ChartingState.returnTo = isFreeplay ? "freeplay" : (isStoryMode ? "story" : "menu");
 			#if windows
 			DiscordClient.changePresence("Chart Editor", null, null, true);
 			#end
