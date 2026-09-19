@@ -136,13 +136,52 @@ class Paths
 	}
 
 	#if web
+	static function webMusicURL(key:String, ?library:String):String
+	{
+		var relative = 'music/$key.ogg';
+
+		// An explicit library always wins.
+		if (library != null && library != "default" && library != "preload")
+		{
+			var explicit = 'assets/$library/$relative';
+			if (OpenFlAssets.exists(explicit, MUSIC))
+				return explicit;
+
+			var explicitMp3 = 'assets/$library/music/$key.mp3';
+			if (OpenFlAssets.exists(explicitMp3, MUSIC))
+				return explicitMp3;
+		}
+
+		// Match Paths.getPath(): current level, then shared, then preload.
+		if (currentLevel != null)
+		{
+			var levelOgg = 'assets/$currentLevel/$relative';
+			if (OpenFlAssets.exists(levelOgg, MUSIC))
+				return levelOgg;
+
+			var levelMp3 = 'assets/$currentLevel/music/$key.mp3';
+			if (OpenFlAssets.exists(levelMp3, MUSIC))
+				return levelMp3;
+		}
+
+		var sharedOgg = 'assets/shared/$relative';
+		if (OpenFlAssets.exists(sharedOgg, MUSIC))
+			return sharedOgg;
+
+		var sharedMp3 = 'assets/shared/music/$key.mp3';
+		if (OpenFlAssets.exists(sharedMp3, MUSIC))
+			return sharedMp3;
+
+		var preloadOgg = 'assets/preload/$relative';
+		if (OpenFlAssets.exists(preloadOgg, MUSIC))
+			return preloadOgg;
+
+		return 'assets/preload/music/$key.mp3';
+	}
+
 	inline static public function musicStreamURL(key:String, ?library:String):String
 	{
-		var lib = (library == null || library == "default" || library == "preload") ? "preload" : library;
-		var ogg = 'assets/$lib/music/$key.ogg';
-		if (OpenFlAssets.exists(ogg, MUSIC))
-			return ogg;
-		return 'assets/$lib/music/$key.mp3';
+		return webMusicURL(key, library);
 	}
 
 	inline static public function instStreamURL(song:String):String
