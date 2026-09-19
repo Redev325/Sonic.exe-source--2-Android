@@ -143,7 +143,7 @@ class GameOverSubstate extends MusicBeatSubstate
 		else if (PlayState.SONG.song.toLowerCase() == 'sunshine')
 		{
 			bf.alpha = 0;
-			bfdeathshit.frames = Paths.getSparrowAtlas('3DGOpng');
+			bfdeathshit.frames = Paths.getSparrowAtlas('3DGOpng', 'deferred');
 			bfdeathshit.setGraphicSize(720, 720);
 			bfdeathshit.animation.addByPrefix('firstdeath', 'DeathAnim', 24, false);
 			bfdeathshit.cameras = [coolcamera];
@@ -257,7 +257,8 @@ class GameOverSubstate extends MusicBeatSubstate
 		switch (PlayState.SONG.song)
 		{
 			case 'endless':
-				FlxG.sound.music.stop();
+				if (FlxG.sound.music != null)
+					FlxG.sound.music.pause();
 				FlxTween.tween(countdown, {alpha: 0}, 0.5);
 				remove(topMajins);
 				remove(bottomMajins);
@@ -346,7 +347,8 @@ class GameOverSubstate extends MusicBeatSubstate
 			{
 				actuallynotfuckd = true;
 
-				FlxG.sound.music.stop();
+				if (FlxG.sound.music != null)
+					FlxG.sound.music.pause();
 
 				if (PlayState.isStoryMode)
 					FlxG.switchState(new StoryMenuState());
@@ -363,23 +365,25 @@ class GameOverSubstate extends MusicBeatSubstate
 
 		if (bf.animation.curAnim.name == 'firstDeath' && bf.animation.curAnim.finished)
 		{
-			FlxG.sound.playMusic(Paths.music('gameOver' + stageSuffix));
+			playMusicSafe('gameOver' + stageSuffix);
 			switch (PlayState.SONG.song.toLowerCase())
 			{
 				case 'milk':
 					FlxTween.tween(bfdeathshit, {alpha: 1}, 1);
-					FlxG.sound.music.stop();
-					FlxG.sound.playMusic(Paths.music('Sunky_death'));
+					if (FlxG.sound.music != null)
+					FlxG.sound.music.pause();
+					playMusicSafe('Sunky_death');
 				case 'sunshine':
-					FlxG.sound.playMusic(Paths.music('sunshinegameover'));
+					playMusicSafe('sunshinegameover');
 				case 'too-fest':
-					FlxG.sound.music.stop();
+					if (FlxG.sound.music != null)
+					FlxG.sound.music.pause();
 				case 'chaos':
 					bfdeathshit.animation.play('h', true);
-					FlxG.sound.playMusic(Paths.music('chaosgameover'));
+					playMusicSafe('chaosgameover');
 					playVoiceLine(StringTools.replace(Paths.sound('FleetLines', 'exe'), '.ogg', ''), 11); // How to search for a folder, step 1. don't.
 				case 'black-sun':
-					FlxG.sound.playMusic(Paths.music('Exe_death'));
+					playMusicSafe('Exe_death');
 				case 'cycles':
 					playVoiceLine(StringTools.replace(Paths.sound('XLines', 'exe'), '.ogg', ''), 5);
 			}
@@ -387,10 +391,21 @@ class GameOverSubstate extends MusicBeatSubstate
 				startCountdown();
 		}
 
-		if (FlxG.sound.music.playing)
+		if (FlxG.sound.music != null && FlxG.sound.music.playing)
 		{
 			Conductor.songPosition = FlxG.sound.music.time;
 		}
+	}
+
+	function playMusicSafe(key:String, volume:Float = 1, loop:Bool = true):Void
+	{
+		#if web
+			if (FlxG.sound.music != null)
+				FlxG.sound.music.pause();
+			FlxG.sound.music = FlxG.sound.stream(Paths.musicStreamURL(key), volume, loop, null, false);
+		#else
+			FlxG.sound.playMusic(Paths.music(key), volume, loop);
+		#end
 	}
 
 	function playVoiceLine(path:String,
@@ -400,7 +415,15 @@ class GameOverSubstate extends MusicBeatSubstate
 
 		var rng = Std.string(FlxG.random.int(1, num));
 
-		voiceline.loadEmbedded(path + '/' + rng + '.ogg');
+		#if web
+			var streamPath = path;
+			var colon = streamPath.indexOf(":");
+			if (colon >= 0)
+				streamPath = streamPath.substr(colon + 1);
+			voiceline.loadStream(streamPath + '/' + rng + '.ogg', false, false, null, null);
+		#else
+			voiceline.loadEmbedded(path + '/' + rng + '.ogg');
+		#end
 		voiceline.play();
 		voiceline.onComplete = function()
 		{
@@ -437,14 +460,15 @@ class GameOverSubstate extends MusicBeatSubstate
 				islol = false;
 				FlxG.camera.flash(FlxColor.RED, 4);
 			});
-			FlxG.sound.music.stop();
+			if (FlxG.sound.music != null)
+				FlxG.sound.music.pause();
 			switch (PlayState.SONG.song.toLowerCase())
 			{
 				case 'black-sun':
 					FlxG.sound.play(Paths.sound('Exe_die'));
 
 				default:
-					FlxG.sound.play(Paths.music('gameOverEnd' + stageSuffix), 1);
+					playMusicSafe('gameOverEnd' + stageSuffix, 1, false);
 			}
 
 			new FlxTimer().start(0.7, function(tmr:FlxTimer)
