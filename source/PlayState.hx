@@ -50,6 +50,7 @@ import lime.media.AudioContext;
 import lime.media.AudioManager;
 import lime.utils.Assets;
 import openfl.Lib;
+import openfl.Assets as OpenFlAssets;
 import openfl.display.BitmapData;
 import openfl.display.BlendMode;
 import openfl.display.StageQuality;
@@ -3395,10 +3396,16 @@ class PlayState extends MusicBeatState
 
 		#if web
 		if (SONG.needsVoices)
-			vocals = new FlxSound().loadStream(Paths.voicesStreamURL(PlayState.SONG.song), false, false, null, null);
+		{
+			var vocalAsset = OpenFlAssets.getSound(Paths.voices(PlayState.SONG.song));
+			if (vocalAsset != null)
+				vocals = new FlxSound().loadEmbedded(vocalAsset, false, false);
+			else
+				vocals = new FlxSound().loadStream(Paths.voicesStreamURL(PlayState.SONG.song), false, false, null, null);
+		}
 		else
 			vocals = new FlxSound();
-		#else
+	#else
 		if (SONG.needsVoices)
 			vocals = new FlxSound().loadEmbedded(Paths.voices(PlayState.SONG.song));
 		else
