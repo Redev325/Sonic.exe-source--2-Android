@@ -503,19 +503,10 @@ class PlayState extends MusicBeatState
 				preloaded = true;
 			}
 			#if web
-			// LoadingState preloads the current song on HTML5. Use the decoded asset
-			// as the real music object so pause/resume and state cleanup work normally.
-			var instAsset = OpenFlAssets.getSound(Paths.inst(PlayState.SONG.song));
-			if (instAsset != null)
-			{
-				FlxG.sound.playMusic(instAsset, 0, false);
-				FlxG.sound.music.pause();
-			}
-			else
-			{
-				FlxG.sound.music = FlxG.sound.stream(Paths.instStreamURL(PlayState.SONG.song), 0, false, null, false);
-				FlxG.sound.music.pause();
-			}
+			// LoadingState already loads the song audio on HTML5. Do not create a
+			// second global music object here; startSong() creates the one real
+			// instrument channel used by this PlayState.
+			trace('HTML5 song audio ready: ' + PlayState.SONG.song);
 			#else
 			FlxG.sound.playMusic(Paths.inst(PlayState.SONG.song), 0, false);
 			#end
