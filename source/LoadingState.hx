@@ -96,16 +96,28 @@ class LoadingState extends MusicBeatState
 	
 	function checkLibrary(library:String)
 	{
-		trace(Assets.hasLibrary(library));
+		trace('Loading library: ' + library);
+
+		@:privateAccess
+		if (!LimeAssets.libraryPaths.exists(library))
+			throw "Missing library: " + library;
+
+		#if web
+		// On HTML5, having an AssetLibrary object does not mean its files are
+		// ready for use. Always await the asynchronous library load.
+		var callback = callbacks.add("library:" + library);
+		Assets.loadLibrary(library).onComplete(function (_) { callback(); }).onError(function (error)
+		{
+			trace('Failed to load library ' + library + ': ' + error);
+			callback();
+		});
+		#else
 		if (Assets.getLibrary(library) == null)
 		{
-			@:privateAccess
-			if (!LimeAssets.libraryPaths.exists(library))
-				throw "Missing library: " + library;
-			
 			var callback = callbacks.add("library:" + library);
 			Assets.loadLibrary(library).onComplete(function (_) { callback(); });
 		}
+		#end
 	}
 	
 	override function beatHit()
