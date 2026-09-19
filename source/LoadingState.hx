@@ -88,7 +88,14 @@ checkLoadSong(getSongPath());
 			// @:privateAccess
 			// library.pathGroups.set(symbolPath, [library.__cacheBreak(symbolPath)]);
 			var callback = callbacks.add("song:" + path);
-			Assets.loadSound(path).onComplete(function (_) { callback(); });
+			Assets.loadSound(path).onComplete(function (_) {
+				callback();
+			}).onError(function (error) {
+				// Do not leave the loading state stuck forever if a browser cannot
+				// decode an audio file. PlayState can still use its HTML5 stream URL.
+				trace('Failed to preload song audio ' + path + ': ' + error);
+				callback();
+			});
 		}
 	}
 	
