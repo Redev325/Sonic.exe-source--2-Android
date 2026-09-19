@@ -91,6 +91,8 @@ class Paths
 
 	static public function sound(key:String, ?library:String)
 	{
+		if (library == "title")
+			return getPath('sounds/$key.ogg', SOUND, library);
 		return getPath('sounds/$key.$SOUND_EXT', SOUND, library);
 	}
 
@@ -108,6 +110,8 @@ class Paths
 
 	inline static public function music(key:String, ?library:String)
 	{
+		if (library == "title")
+			return getPath('music/$key.mp3', MUSIC, library);
 		return getPath('music/$key.$SOUND_EXT', MUSIC, library);
 	}
 

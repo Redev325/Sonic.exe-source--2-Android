@@ -88,6 +88,12 @@ class TitleState extends MusicBeatState
 
 		trace('hello');
 
+		// Bind and initialize persistent data before MusicBeatState.create()
+		// accesses FPS/input settings.
+		FlxG.save.bind('funkin', 'ninjamuffin99');
+		KadeEngineData.initSave();
+		Highscore.load();
+
 		// DEBUG BULLSHIT
 
 		super.create();
@@ -99,36 +105,15 @@ class TitleState extends MusicBeatState
 		trace('NEWGROUNDS LOL');
 		#end
 
-		FlxG.save.bind('funkin', 'ninjamuffin99');
-
-		KadeEngineData.initSave();
-
-		// var file:SMFile = SMFile.loadFile("file.sm");
-		// this was testing things
-
-		Highscore.load();
-
 		#if FREEPLAY
 		FlxG.switchState(new FreeplayState());
 		#elseif CHARTING
 		FlxG.switchState(new ChartingState());
 		#else
 		#if web
-		// HTML5 keeps the large preload library lazy. Load its manifest plus the
-		// Sonic.EXE libraries before any title-screen asset is requested.
-		Assets.loadLibrary('preload').onComplete(function(_)
+		new FlxTimer().start(0.1, function(tmr:FlxTimer)
 		{
-			curWacky = FlxG.random.getObject(getIntroTextShit());
-			Assets.loadLibrary('shared').onComplete(function(_)
-			{
-				Assets.loadLibrary('exe').onComplete(function(_)
-				{
-					new FlxTimer().start(0.1, function(tmr:FlxTimer)
-					{
-						startIntro();
-					});
-				});
-			});
+			startIntro();
 		});
 		#else
 		new FlxTimer().start(0.1, function(tmr:FlxTimer)
@@ -167,7 +152,7 @@ class TitleState extends MusicBeatState
 			// https://github.com/HaxeFlixel/flixel-addons/pull/348
 
 			// var music:FlxSound = new FlxSound();
-			// music.loadStream(Paths.music('freakyMenu'));
+			// music.loadStream(Paths.music('freakyMenu', 'title'));
 			// FlxG.sound.list.add(music);
 			// music.play();
 			FlxG.sound.playMusic(Paths.music('freakyMenu'), 0);
@@ -179,7 +164,7 @@ class TitleState extends MusicBeatState
 		persistentUpdate = true;
 
 		bg = new FlxSprite(0, 0);
-		bg.frames = Paths.getSparrowAtlas('NewTitleMenuBG', 'exe');
+		bg.frames = Paths.getSparrowAtlas('NewTitleMenuBG', 'title');
 		bg.animation.addByPrefix('idle', "TitleMenuSSBG instance 1", 24);
 		bg.animation.play('idle');
 		bg.alpha = .75;
@@ -191,7 +176,7 @@ class TitleState extends MusicBeatState
 		add(bg);
 
 		logoBlBUMP = new FlxSprite(0, 0);
-		logoBlBUMP.loadGraphic(Paths.image('Logo', 'exe'));
+		logoBlBUMP.loadGraphic(Paths.image('Logo', 'title'));
 		logoBlBUMP.antialiasing = true;
 
 		logoBlBUMP.scale.x = .5;
@@ -210,7 +195,7 @@ class TitleState extends MusicBeatState
 		add(logoBl);
 
 		titleText = new FlxSprite(0, 0);
-		titleText.frames = Paths.getSparrowAtlas('titleEnterNEW');
+		titleText.frames = Paths.getSparrowAtlas('titleEnterNEW', 'title');
 		titleText.animation.addByPrefix('idle', "Press Enter to Begin instance 1", 24);
 		titleText.animation.addByPrefix('press', "ENTER PRESSED instance 1", 24, false);
 		titleText.antialiasing = true;
@@ -228,35 +213,9 @@ class TitleState extends MusicBeatState
 		// FlxTween.tween(logoBl, {y: logoBl.y + 50}, 0.6, {ease: FlxEase.quadInOut, type: PINGPONG});
 		// FlxTween.tween(logo, {y: logoBl.y + 50}, 0.6, {ease: FlxEase.quadInOut, type: PINGPONG, startDelay: 0.1});
 
-		credGroup = new FlxGroup();
-		add(credGroup);
-		textGroup = new FlxGroup();
-
-		blackScreen = new FlxSprite().makeGraphic(FlxG.width, FlxG.height, FlxColor.BLACK);
-		credGroup.add(blackScreen);
-
-		credTextShit = new Alphabet(0, 0, "ninjamuffin99\nPhantomArcade\nkawaisprite\nevilsk8er", true);
-		credTextShit.screenCenter();
-
-		// credTextShit.alignment = CENTER;
-
-		credTextShit.visible = false;
-
-		ngSpr = new FlxSprite(0, FlxG.height * 0.52).loadGraphic(Paths.image('newgrounds_logo'));
-		add(ngSpr);
-		ngSpr.visible = false;
-		ngSpr.setGraphicSize(Std.int(ngSpr.width * 0.8));
-		ngSpr.updateHitbox();
-		ngSpr.screenCenter(X);
-		ngSpr.antialiasing = true;
-
-		FlxTween.tween(credTextShit, {y: credTextShit.y + 20}, 2.9, {ease: FlxEase.quadInOut, type: PINGPONG});
-
 		FlxG.mouse.visible = false;
 
-		// credGroup.add(credTextShit);
-
-		FlxG.sound.play(Paths.sound('TitleLaugh'), 1, false, null, false, function()
+		FlxG.sound.play(Paths.sound('TitleLaugh', 'title'), 1, false, null, false, function()
 		{
 			skipIntro();
 		});
@@ -340,8 +299,8 @@ class TitleState extends MusicBeatState
 				titleText.animation.play('press');
 
 			FlxG.camera.flash(FlxColor.RED, 0.2);
-			FlxG.sound.play(Paths.sound('menumomentclick', 'exe'));
-			FlxG.sound.play(Paths.sound('menulaugh', 'exe'));
+			FlxG.sound.play(Paths.sound('menumomentclick', 'title'));
+			FlxG.sound.play(Paths.sound('menulaugh', 'title'));
 
 			FlxTween.tween(bg, {alpha: 0}, 1);
 
@@ -458,12 +417,9 @@ class TitleState extends MusicBeatState
 	{
 		if (!skippedIntro)
 		{
-			remove(ngSpr);
-
-			FlxG.sound.play(Paths.sound('showMoment', 'shared'), .4);
+			FlxG.sound.play(Paths.sound('showMoment', 'title'), .4);
 
 			FlxG.camera.flash(FlxColor.RED, 2);
-			remove(credGroup);
 			skippedIntro = true;
 		}
 	}
