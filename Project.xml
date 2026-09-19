@@ -43,7 +43,8 @@
 
 	<classpath name="source" />
 
-	<assets path="assets/preload" library="preload" embed="false" if="web"/>
+	<!-- Kade Engine menu/game code accesses these assets synchronously on HTML5. -->
+	<assets path="assets/preload" library="preload" embed="true" if="web"/>
 	<assets path="assets/preload" library="preload" embed="false" exclude="*.mp3" unless="web"/>
 	
 	<!-- <define name="PRELOAD_ALL" /> -->
