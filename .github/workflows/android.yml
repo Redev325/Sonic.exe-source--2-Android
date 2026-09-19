@@ -21,7 +21,7 @@ jobs:
           haxe-version: 4.2.3
 
       - name: Cache haxelib path
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           path: |
             %HAXELIB_ROOT%
@@ -68,7 +68,7 @@ jobs:
           haxelib list
           haxelib run lime build android
           
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v4
         with:
           name: Android Build
           path: export/release/android/bin/app/build/outputs/apk/debug
