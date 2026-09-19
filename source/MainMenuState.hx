@@ -105,8 +105,16 @@ class MainMenuState extends MusicBeatState
 
 		PlayStateChangeables.nocheese = true;
 
-		if (!FlxG.sound.music.playing)
+		if (FlxG.sound.music == null || !FlxG.sound.music.playing)
+		{
+			#if web
+			FlxG.sound.music = FlxG.sound.stream(Paths.musicStreamURL('MainMenuMusic'), 0, true, null, false);
+			FlxG.sound.music.persist = true;
+			FlxG.sound.music.fadeIn(5, 0, 0.7);
+			#else
 			FlxG.sound.playMusic(Paths.music('MainMenuMusic'));
+			#end
+		}
 
 		persistentUpdate = persistentDraw = true;
 
