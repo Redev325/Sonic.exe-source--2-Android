@@ -2086,10 +2086,8 @@ class PlayState extends MusicBeatState
 						FlxTween.tween(blackFuck, {alpha: 0}, 1);
 					});
 				case 'triple-trouble':
-					// Triple Trouble was missing its song start call on the HTML5 path.
-					// The common switch below starts the countdown once, so only
-					// start the music here.
 					startSong();
+					startCountdown();
 					add(blackFuck);
 					startCircle.loadGraphic(Paths.image('StartScreens/CircleTripleTrouble', 'exe'));
 					startCircle.x += 777;
