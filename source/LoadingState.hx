@@ -179,7 +179,8 @@ checkLoadSong(getSongPath());
 			return new LoadingState(target, stopMusic);
 		#end
 		if (stopMusic && FlxG.sound.music != null)
-			FlxG.sound.music.stop();
+			if (FlxG.sound.music != null)
+				FlxG.sound.music.pause();
 		
 		return target;
 	}
