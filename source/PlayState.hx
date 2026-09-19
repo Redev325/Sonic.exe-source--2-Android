@@ -3208,6 +3208,12 @@ class PlayState extends MusicBeatState
 				data = i;
 		}
 
+		// HTML5 browsers can report Space through KeyboardEvent.keyCode without
+		// OpenFL's FlxKey string map providing a usable name. Triple Trouble
+		// ring charts reserve lane 2 for Space, so recognize it directly.
+		if (isRing && evt.keyCode == 32)
+			data = 2;
+
 		if (data == -1)
 		{
 			return;
