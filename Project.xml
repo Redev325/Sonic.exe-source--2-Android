@@ -22,6 +22,7 @@
 
 	<!--HTML5-specific-->
 	<window if="html5" resizable="true" />
+	<define name="disable_preloader_assets" if="web" />
 
 	<!--Desktop-specific-->
 	<window if="desktop" orientation="landscape" fullscreen="false" resizable="true" vsync="false"/>
@@ -76,8 +77,8 @@
 	<assets path="assets/shared"   library="shared"   exclude="*.mp3" unless="web"/>
 	<assets path="assets/exe"      library="exe"	  exclude="*.ogg" if="web"/>
 	<assets path="assets/exe"      library="exe"   	  exclude="*.mp3" unless="web"/>
-	<assets path="assets/videos" exclude="*.mp3" if="web"/>
-	<assets path="assets/videos" exclude="*.ogg" unless="web"/>
+	<assets path="assets/videos" library="videos" exclude="*.mp3" if="web"/>
+	<assets path="assets/videos" library="videos" exclude="*.ogg" unless="web"/>
 	<assets path="assets/deferred" library="deferred" exclude="*.ogg" if="web"/>
 	<assets path="assets/deferred" library="deferred" exclude="*.mp3" unless="web"/>
 	<assets path="assets/title" library="title"/>
