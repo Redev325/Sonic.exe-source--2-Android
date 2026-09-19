@@ -60,9 +60,11 @@ class LoadingState extends MusicBeatState
 			{
 				callbacks = new MultiCallback(onLoad);
 				var introComplete = callbacks.add("introComplete");
+#if !web
 				checkLoadSong(getSongPath());
 				if (PlayState.SONG.needsVoices)
 					checkLoadSong(getVocalPath());
+				#end
 				checkLibrary("shared");
 				checkLibrary('exe');
 				#if web
@@ -155,9 +157,13 @@ class LoadingState extends MusicBeatState
 	{
 		Paths.setCurrentLevel('exe');
 		#if NO_PRELOAD_ALL
+#if web
+		var loaded = isLibraryLoaded("shared") && isLibraryLoaded("exe");
+		#else
 		var loaded = isSoundLoaded(getSongPath())
 			&& (!PlayState.SONG.needsVoices || isSoundLoaded(getVocalPath()))
 			&& isLibraryLoaded("shared");
+		#end
 		
 		if (!loaded)
 			return new LoadingState(target, stopMusic);
