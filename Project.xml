@@ -42,7 +42,7 @@
 
 	<classpath name="source" />
 
-	<assets path="assets/preload" rename="assets" exclude="*.ogg" if="web"/>
+	<assets path="assets/preload" library="preload" exclude="*.ogg" if="web"/>
 	<assets path="assets/preload" rename="assets" exclude="*.mp3" unless="web"/>
 	
 	<!-- <define name="PRELOAD_ALL" /> -->
@@ -62,6 +62,7 @@
 		<library name="songs"    preload="false" />
 		<library name="shared"   preload="false" />
 		<library name="videos"   preload="false" />
+		<library name="preload" preload="false" />
 		<library name="deferred" preload="false" />
 		<library name="exe"   	 preload="false" />
 

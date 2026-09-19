@@ -47,7 +47,11 @@ class Paths
 
 	inline static function getPreloadPath(file:String)
 	{
+		#if web
+		return 'preload:assets/preload/$file';
+		#else
 		return 'assets/$file';
+		#end
 	}
 
 	inline static public function file(file:String, type:AssetType = TEXT, ?library:String)

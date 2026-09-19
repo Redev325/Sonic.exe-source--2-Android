@@ -86,8 +86,6 @@ class TitleState extends MusicBeatState
 		});
 		#end
 
-		curWacky = FlxG.random.getObject(getIntroTextShit());
-
 		trace('hello');
 
 		// DEBUG BULLSHIT
@@ -116,15 +114,19 @@ class TitleState extends MusicBeatState
 		FlxG.switchState(new ChartingState());
 		#else
 		#if web
-		// The Sonic.EXE title screen immediately uses assets from the shared/exe
-		// libraries. Explicitly load those libraries before creating the title UI.
-		Assets.loadLibrary('shared').onComplete(function(_)
+		// HTML5 keeps the large preload library lazy. Load its manifest plus the
+		// Sonic.EXE libraries before any title-screen asset is requested.
+		Assets.loadLibrary('preload').onComplete(function(_)
 		{
-			Assets.loadLibrary('exe').onComplete(function(_)
+			curWacky = FlxG.random.getObject(getIntroTextShit());
+			Assets.loadLibrary('shared').onComplete(function(_)
 			{
-				new FlxTimer().start(0.1, function(tmr:FlxTimer)
+				Assets.loadLibrary('exe').onComplete(function(_)
 				{
-					startIntro();
+					new FlxTimer().start(0.1, function(tmr:FlxTimer)
+					{
+						startIntro();
+					});
 				});
 			});
 		});
