@@ -67,47 +67,30 @@ class FreeplayState extends MusicBeatState // REWRITE FREEPLAY!?!?!? HELL YEA!!!
 		
 		add(prevsongtext);
 
-		if (FlxG.save.data.songArray.length != 0)
+		// The original desktop build unlocks Freeplay entries through persistent save data.
+		// HTML5 starts with a fresh browser save, so an empty unlock array used to replace
+		// the entire menu with a fake "lol" entry. The Sonic.EXE web build should expose
+		// its actual song list normally.
+		for (song in songArray)
 		{
-			for (i in 0...songArray.length)
-			{
+			var box:FlxSprite = new FlxSprite(fuck * 780, 0).loadGraphic(Paths.image('FreeBox'));
+			boxgrp.add(box);
 
-				if (FlxG.save.data.songArray.contains(songArray[fuck]))
-				{
-			
-					FlxG.log.add(songArray[i] + ' found');
-	
-					var box:FlxSprite = new FlxSprite(fuck * 780, 0).loadGraphic(Paths.image('FreeBox'));
-					boxgrp.add(box);
+			var char:FlxSprite = new FlxSprite(fuck * 780, 0).loadGraphic(Paths.image('fpstuff/' + song.toLowerCase()));
+			boxgrp.add(char);
 
-					var char:FlxSprite = new FlxSprite(fuck * 780, 0).loadGraphic(Paths.image('fpstuff/' + songArray[fuck].toLowerCase()));
-					boxgrp.add(char);
+			var daStatic:FlxSprite = new FlxSprite();
+			daStatic.frames = Paths.getSparrowAtlas('daSTAT');
+			daStatic.alpha = 0.2;
+			daStatic.setGraphicSize(620, 465);
+			daStatic.setPosition((fuck * 780) + 440, 211);
+			daStatic.animation.addByPrefix('static','staticFLASH', 24, true);
+			boxgrp.add(daStatic);
+			daStatic.animation.play('static');
 
-					var daStatic:FlxSprite = new FlxSprite();		
-					daStatic.frames = Paths.getSparrowAtlas('daSTAT');	
-					daStatic.alpha = 0.2;	
-					daStatic.setGraphicSize(620, 465);			
-					daStatic.setPosition((fuck * 780) + 440, 211);	
-					daStatic.animation.addByPrefix('static','staticFLASH', 24, true);			
-					boxgrp.add(daStatic);
-					daStatic.animation.play('static');
-
-					fuck += 1;
-				}
-				else 
-				{
-					songArray.remove(songArray[fuck]);
-				}
-				
-			}
+			fuck += 1;
 		}
-		else songArray = ['lol'];
 
-		if (songArray[0] == 'lol')
-		{
-			remove(songtext);
-			remove(prevsongtext);
-		}
 		
 		add(boxgrp);
 
