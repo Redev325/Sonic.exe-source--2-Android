@@ -350,7 +350,7 @@ class TitleState extends MusicBeatState
 			PlayState.storyDifficulty = 1;
 			PlayState.storyWeek = 1;
 			FlxG.camera.fade(FlxColor.WHITE, 0.5, false);
-			FlxG.sound.play(Paths.sound('confirmMenu'));
+			FlxG.sound.play(Paths.sound('confirmMenu', 'title'));
 			FlxTransitionableState.skipNextTransIn = true;
 			FlxTransitionableState.skipNextTransOut = true;
 			if (!FlxG.save.data.songArray.contains('milk') && !FlxG.save.data.botplay)
@@ -398,7 +398,7 @@ class TitleState extends MusicBeatState
 	{
 		if (!skippedIntro)
 		{
-			FlxG.sound.play(Paths.sound('boop1', 'shared'));
+			FlxG.sound.play(Paths.sound('boop1', 'title'));
 		}
 	}
 
@@ -406,7 +406,7 @@ class TitleState extends MusicBeatState
 	{
 		if (!skippedIntro)
 		{
-			FlxG.sound.play(Paths.sound('boop2', 'shared'));
+			FlxG.sound.play(Paths.sound('boop2', 'title'));
 		}
 	}
 
@@ -414,7 +414,7 @@ class TitleState extends MusicBeatState
 	{
 		if (!skippedIntro)
 		{
-			FlxG.sound.play(Paths.sound('showMoment', 'shared'), .4);
+			FlxG.sound.play(Paths.sound('showMoment', 'title'), .4);
 		}
 	}
 
