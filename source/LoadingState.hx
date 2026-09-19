@@ -143,7 +143,7 @@ checkLoadSong(getSongPath());
 	function onLoad()
 	{
 		if (stopMusic && FlxG.sound.music != null)
-			FlxG.sound.music.stop();
+			FlxG.sound.music.pause();
 		
 		FlxG.switchState(target);
 	}
