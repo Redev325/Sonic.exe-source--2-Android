@@ -5957,15 +5957,20 @@ class PlayState extends MusicBeatState
 			else
 				spr.centerOffsets();
 
-			// The ring confirm frame is a different size from the idle frame.
-			// Re-center its sprite between the Down and Up receptor centers so
-			// the ring cannot jump horizontally when pressed or confirmed.
-			if (isRing && spr.ID == 2 && playerStrums.members.length > 3)
+			// Triple Trouble's middle ring receptor has animation frames with
+			// different dimensions. Always anchor that receptor to the fixed
+			// middle-lane center so neither the receptor nor incoming ring notes
+			// jump when the press/confirm animation changes frame size.
+			if (isRing && spr.ID == 2)
 			{
-				var downCenter = playerStrums.members[1].x + playerStrums.members[1].width / 2;
-				var upCenter = playerStrums.members[3].x + playerStrums.members[3].width / 2;
-				var ringCenter = (downCenter + upCenter) / 2;
-				spr.x = ringCenter - spr.width / 2;
+				var ringLaneCenterX:Float = strumLine.x + Note.swagWidth * 2 + Note.swagWidth / 2
+					+ 50 + (FlxG.width / 2);
+				if (PlayStateChangeables.Optimize)
+					ringLaneCenterX -= 275;
+
+				var ringLaneCenterY:Float = strumLine.y + Note.swagWidth / 2;
+				spr.x = ringLaneCenterX - spr.width / 2;
+				spr.y = ringLaneCenterY - spr.height / 2;
 			}
 		});
 	}
