@@ -287,7 +287,7 @@ class PlayState extends MusicBeatState
 
 	// Keep Triple Trouble's ring receptors visually consistent even when
 	// the atlas switches between static/press/confirm frames of different sizes.
-	private static inline var RING_STRUM_SIZE:Float = 110;
+	private static inline var RING_STRUM_SIZE:Int = 110;
 
 	public static var daPixelZoom:Float = 6;
 
