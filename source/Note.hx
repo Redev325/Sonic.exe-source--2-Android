@@ -224,7 +224,7 @@ class Note extends FlxSprite
 								animation.addByPrefix('redScroll', 'red0');
 								animation.addByPrefix('blueScroll', 'blue0');
 								animation.addByPrefix('purpleScroll', 'purple0');
-								if (isRing) animation.addByPrefix('goldScroll', 'gold');
+								if (isRing) animation.addByNames('goldScroll', ['gold00000']);
  
 								animation.addByPrefix('purpleholdend', 'pruple end hold');
 								animation.addByPrefix('greenholdend', 'green hold end');
