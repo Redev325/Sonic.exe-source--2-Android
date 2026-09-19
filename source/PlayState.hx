@@ -335,8 +335,10 @@ class PlayState extends MusicBeatState
 
 	override public function create()
 	{
+		#if !web
 		FlxG.sound.cache(Paths.inst(PlayState.SONG.song));
 		FlxG.sound.cache(Paths.voices(PlayState.SONG.song));
+		#end
 
 		if (isRing)
 			ballsinyojaws = 1;
