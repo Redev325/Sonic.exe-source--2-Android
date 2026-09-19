@@ -265,7 +265,8 @@ class OptionsMenu extends MusicBeatState
 							camera = new FlxCamera();
 							FlxG.cameras.add(camera);
 							canselect = false;
-							FlxG.sound.music.stop();
+							if (FlxG.sound.music != null)
+								FlxG.sound.music.pause();
 							var nocheat:FlxSprite = new FlxSprite().loadGraphic(Paths.image('nocheating', 'exe'));
 							nocheat.alpha = 0;
 							nocheat.cameras = [camera];
