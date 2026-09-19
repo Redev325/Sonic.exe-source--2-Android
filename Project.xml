@@ -156,6 +156,9 @@
 
 	<!--Disable the Flixel core focus lost screen-->
 	<haxedef name="FLX_NO_FOCUS_LOST_SCREEN" />
+	<!-- HTML5: do not let the OpenFL preloader download game asset libraries.
+	     The game loads its libraries explicitly after startup. -->
+	<haxedef name="disable_preloader_assets" if="html5" />
 
 	<!--Disable the Flixel core debugger. Automatically gets set whenever you compile in release mode!-->
 	<haxedef name="FLX_NO_DEBUG" unless="debug" />
