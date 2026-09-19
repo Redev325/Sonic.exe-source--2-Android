@@ -83,6 +83,8 @@
 	<assets path="assets/deferred" library="deferred" exclude="*.ogg" if="web"/>
 	<assets path="assets/deferred" library="deferred" exclude="*.mp3" unless="web"/>
 	<assets path="assets/title" library="title"/>
+	<!-- Story Mode menu music is loaded with the title library so it is ready before the Story Mode click. -->
+	<assets path="assets/preload/music/storymodemenumusic.ogg" library="title" />
 
 	
 	<assets path='example_mods' rename='mods' embed='false'/>
