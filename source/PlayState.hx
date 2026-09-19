@@ -3887,6 +3887,24 @@ class PlayState extends MusicBeatState
 		}
 	}
 
+		// Triple Trouble uses five player lanes: Left, Down, Ring/Space, Up, Right.
+		// The ring atlas frame has a different visual center than the arrow frames,
+		// so center its actual graphic between the Down and Up receptor graphics.
+		// This keeps the logical lane at index 2 unchanged for input/chart handling.
+		if (isRing && player == 1 && playerStrums.members.length >= 4)
+		{
+			var ringStrum = playerStrums.members[2];
+			var downMid = playerStrums.members[1].getGraphicMidpoint();
+			var upMid = playerStrums.members[3].getGraphicMidpoint();
+			var ringMid = ringStrum.getGraphicMidpoint();
+			var targetX = (downMid.x + upMid.x) / 2;
+			ringStrum.x += targetX - ringMid.x;
+			downMid.put();
+			upMid.put();
+			ringMid.put();
+		}
+
+
 	function tweenCamIn():Void
 	{
 		FlxTween.tween(FlxG.camera, {zoom: 1.3}, (Conductor.stepCrochet * 4 / 1000), {ease: FlxEase.elasticInOut});
