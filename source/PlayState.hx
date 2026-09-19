@@ -3873,12 +3873,14 @@ class PlayState extends MusicBeatState
 			if (PlayStateChangeables.Optimize)
 				babyArrow.x -= 275;
 
-			// Triple Trouble uses a dedicated Space/ring lane at logical index 2.
-			// The ring graphic's visual center sits slightly to the right of the
-			// gap between the Down and Up receptors, so only its display position
-			// is corrected; input/chart lane 2 remains unchanged.
+			// Triple Trouble's Space/ring receptor occupies the fifth input
+			// lane's center slot between Down and Up. Center the wider ring
+			// artwork on that lane instead of applying a fixed pixel offset.
 			if (isRing && player == 1 && i == 2)
-				babyArrow.x -= Note.swagWidth / 3;
+			{
+				var ringLaneCenter = babyArrow.x + Note.swagWidth / 2;
+				babyArrow.x = ringLaneCenter - babyArrow.width / 2;
+			}
 
 			if (FlxG.save.data.midscroll && player == 1)
 				babyArrow.x -= 68.75 * deezNuts[ballsinyojaws];
@@ -4981,6 +4983,13 @@ class PlayState extends MusicBeatState
 							daNote.angle = playerStrums.members[Math.floor(Math.abs(daNote.noteData))].angle;
 						daNote.alpha = playerStrums.members[Math.floor(Math.abs(daNote.noteData))].alpha;
 					}
+
+						// Ring notes use a wider sprite than the receptor. Match centers.
+						if (isRing && daNote.noteData == 2 && playerStrums.members.length > 2)
+						{
+							var ringStrumForNote = playerStrums.members[2];
+							daNote.x = ringStrumForNote.x + (ringStrumForNote.width - daNote.width) / 2;
+						}
 					else if (!daNote.wasGoodHit && !daNote.modifiedByLua)
 					{
 						daNote.visible = strumLineNotes.members[Math.floor(Math.abs(daNote.noteData))].visible;
@@ -5947,6 +5956,17 @@ class PlayState extends MusicBeatState
 			}
 			else
 				spr.centerOffsets();
+
+			// The ring confirm frame is a different size from the idle frame.
+			// Re-center its sprite between the Down and Up receptor centers so
+			// the ring cannot jump horizontally when pressed or confirmed.
+			if (isRing && spr.ID == 2 && playerStrums.members.length > 3)
+			{
+				var downCenter = playerStrums.members[1].x + playerStrums.members[1].width / 2;
+				var upCenter = playerStrums.members[3].x + playerStrums.members[3].width / 2;
+				var ringCenter = (downCenter + upCenter) / 2;
+				spr.x = ringCenter - spr.width / 2;
+			}
 		});
 	}
 
