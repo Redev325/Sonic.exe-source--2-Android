@@ -14,6 +14,7 @@ import flixel.tweens.FlxTween;
 import flixel.util.FlxColor;
 import flixel.util.FlxTimer;
 import lime.net.curl.CURLCode;
+import openfl.Assets;
 
 using StringTools;
 
@@ -51,6 +52,21 @@ class StoryMenuState extends MusicBeatState
 
 	override function create()
 	{
+		#if web
+		// Story Mode uses assets from the exe library. Ensure that library is
+		// ready before constructing the animated background and UI atlases.
+		if (Assets.getLibrary('exe') == null)
+		{
+			Assets.loadLibrary('exe').onComplete(function(_)
+			{
+				FlxG.switchState(new StoryMenuState());
+			}).onError(function(error)
+			{
+				trace('Failed to load exe library for story menu: ' + error);
+			});
+			return;
+		}
+		#end
 		switch (FlxG.save.data.storyProgress)
 		{
 			case 1:
