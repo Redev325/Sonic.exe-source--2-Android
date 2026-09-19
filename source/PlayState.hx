@@ -3129,9 +3129,14 @@ class PlayState extends MusicBeatState
 
 		for (i in 0...binds.length) // binds
 		{
-			if (binds[i].toLowerCase() == key.toLowerCase())
+			if (binds[i] != null && key != null && binds[i].toLowerCase() == key.toLowerCase())
 				data = i;
 		}
+
+		// Ring charts use lane 2 for the dedicated Space/ring input.
+		// Browser key-name conversion is inconsistent, so recognize physical Space directly.
+		if (isRing && evt.keyCode == 32)
+			data = 2;
 
 		if (data == -1)
 			return;
@@ -3199,7 +3204,7 @@ class PlayState extends MusicBeatState
 
 		for (i in 0...binds.length) // binds
 		{
-			if (binds[i].toLowerCase() == key.toLowerCase())
+			if (binds[i] != null && key != null && binds[i].toLowerCase() == key.toLowerCase())
 				data = i;
 		}
 
