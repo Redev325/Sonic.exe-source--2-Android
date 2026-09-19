@@ -135,6 +135,34 @@ class Paths
 		return preferred;
 	}
 
+	#if web
+	inline static public function musicStreamURL(key:String, ?library:String):String
+	{
+		var lib = (library == null || library == "default" || library == "preload") ? "preload" : library;
+		return 'assets/$lib/music/$key.$SOUND_EXT';
+	}
+
+	inline static public function instStreamURL(song:String):String
+	{
+		var songLowercase = StringTools.replace(song, " ", "-").toLowerCase();
+		switch (songLowercase) {
+			case 'dad-battle': songLowercase = 'dadbattle';
+			case 'philly-nice': songLowercase = 'philly';
+		}
+		return 'assets/songs/$songLowercase/Inst.$SOUND_EXT';
+	}
+
+	inline static public function voicesStreamURL(song:String):String
+	{
+		var songLowercase = StringTools.replace(song, " ", "-").toLowerCase();
+		switch (songLowercase) {
+			case 'dad-battle': songLowercase = 'dadbattle';
+			case 'philly-nice': songLowercase = 'philly';
+		}
+		return 'assets/songs/$songLowercase/Voices.$SOUND_EXT';
+	}
+	#end
+
 	inline static public function voices(song:String)
 	{
 		var songLowercase = StringTools.replace(song, " ", "-").toLowerCase();
