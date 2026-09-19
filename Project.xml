@@ -72,9 +72,9 @@
 
 	</section>
 	
-	<assets path="assets/songs"    library="songs"    exclude="*.ogg" if="web"/>
+	<assets path="assets/songs"    library="songs"    if="web"/>
 	<assets path="assets/songs"    library="songs"    exclude="*.mp3" unless="web"/>
-	<assets path="assets/shared"   library="shared"   exclude="*.ogg" if="web"/>
+	<assets path="assets/shared"   library="shared"   if="web"/>
 	<assets path="assets/shared"   library="shared"   exclude="*.mp3" unless="web"/>
 	<assets path="assets/exe"      library="exe"	  exclude="*.ogg" if="web"/>
 	<assets path="assets/exe"      library="exe"   	  exclude="*.mp3" unless="web"/>
