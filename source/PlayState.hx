@@ -3866,21 +3866,7 @@ class PlayState extends MusicBeatState
 					playerStrums.add(babyArrow);
 			}
 
-			if (isRing)
-			{
-				babyArrow.animation.callback = function(animName:String, frameNumber:Int, frameIndex:Int)
-				{
-					if (babyArrow.frameWidth > 0)
-						babyArrow.setGraphicSize(RING_STRUM_SIZE);
-				};
-			}
-
 			babyArrow.animation.play('static');
-			if (isRing)
-			{
-				babyArrow.setGraphicSize(RING_STRUM_SIZE);
-				babyArrow.updateHitbox();
-			}
 			babyArrow.x += 50;
 			babyArrow.x += ((FlxG.width / 2) * player);
 
@@ -6420,27 +6406,9 @@ class PlayState extends MusicBeatState
 			note.wasGoodHit = true;
 			setVocalsVolumeSafe(1);
 
-			// Ring notes need a visible hit animation before they disappear.
-			if (isRing && note.noteData == 2 && !note.isSustainNote)
-			{
-				var ringHitScale = note.scale.x * 1.38;
-				FlxTween.tween(note.scale, {x: ringHitScale, y: ringHitScale}, 0.12, {
-					ease: FlxEase.quadOut,
-					onComplete: function(tween:FlxTween)
-					{
-						note.kill();
-						notes.remove(note, true);
-						note.destroy();
-					}
-				});
-				FlxTween.tween(note, {alpha: 0}, 0.12, {ease: FlxEase.quadOut});
-			}
-			else
-			{
-				note.kill();
-				notes.remove(note, true);
-				note.destroy();
-			}
+			note.kill();
+			notes.remove(note, true);
+			note.destroy();
 
 			updateAccuracy();
 		}
