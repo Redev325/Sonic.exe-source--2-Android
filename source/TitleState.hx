@@ -292,7 +292,12 @@ class TitleState extends MusicBeatState
 			else
 				code == 0;
 
-		if (pressedEnter && !transitioning && skippedIntro && code != 4)
+		if (pressedEnter && !transitioning && !skippedIntro)
+		{
+			// Enter skips the title intro/cutscene and reveals the Sonic.EXE title screen.
+			skipIntro();
+		}
+		else if (pressedEnter && !transitioning && skippedIntro && code != 4)
 		{
 			#if (!switch && newgrounds)
 			NGio.unlockMedal(60960);
