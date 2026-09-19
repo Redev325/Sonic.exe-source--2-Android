@@ -35,7 +35,12 @@ class PauseSubState extends MusicBeatSubstate
 	{
 		super();
 
+		#if web
+		// HTML5 audio is asynchronous; use a browser stream for pause music.
+		pauseMusic = new FlxSound().loadStream(Paths.musicStreamURL('breakfast'), true, true);
+		#else
 		pauseMusic = new FlxSound().loadEmbedded(Paths.music('breakfast'), true, true);
+		#end
 		pauseMusic.volume = 0;
 		pauseMusic.play(false, FlxG.random.int(0, Std.int(pauseMusic.length / 2)));
 
