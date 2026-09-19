@@ -4020,6 +4020,9 @@ class PlayState extends MusicBeatState
 		if (isRing)
 			counterNum.text = Std.string(cNum);
 
+		// HTML5 fallback for the fifth Triple Trouble input lane.
+		if (isRing && FlxG.keys.justPressed.SPACE)
+			tryRingKeyboardHit();
 
 		if ((FlxG.keys.justPressed.SPACE || controls.ACCEPT || (_vpad != null && _vpad.buttonA.justPressed) || FlxG.keys.anyJustPressed([FlxKey.fromString(FlxG.save.data.dodgeBind)])) && canDodge) //This looks like sus
 		{
@@ -5669,6 +5672,30 @@ class PlayState extends MusicBeatState
 	var rightHold:Bool = false;
 	var leftHold:Bool = false;
 
+	// HTML5 fallback for Triple Trouble's dedicated middle ring/Space lane.
+	private function tryRingKeyboardHit():Void
+	{
+		if (!isRing || paused || PlayStateChangeables.botPlay || loadRep || !generatedMusic)
+			return;
+
+		var ringNote:Note = null;
+		notes.forEachAlive(function(daNote:Note)
+		{
+			if (ringNote == null
+				&& daNote.noteData == 2
+				&& daNote.mustPress
+				&& !daNote.isSustainNote
+				&& daNote.canBeHit
+				&& !daNote.tooLate
+				&& !daNote.wasGoodHit)
+			{
+				ringNote = daNote;
+			}
+		});
+
+		if (ringNote != null)
+			goodNoteHit(ringNote);
+	}
 
 	// THIS FUNCTION JUST FUCKS WIT HELD NOTES AND BOTPLAY/REPLAY (also gamepad shit)
 
@@ -6204,13 +6231,7 @@ class PlayState extends MusicBeatState
 
 	function goodNoteHit(note:Note, resetMashViolation = true):Void
 	{
-		if (isRing && note.noteData == 2 && !note.isSustainNote)
-		{
-			FlxG.sound.play(Paths.sound('Ring', 'exe'));
-			cNum += 1;
-
-		}
-
+		// Triple Trouble ring feedback is applied after the timing judgement succeeds.
 		if (note.noteType == 3)
 		{
 			var fuckyou:Int = 0;
@@ -6246,6 +6267,17 @@ class PlayState extends MusicBeatState
 
 		if (note.rating == "miss")
 			return;
+
+		if (isRing && note.noteData == 2 && !note.isSustainNote && !note.wasGoodHit)
+		{
+			FlxG.sound.play(Paths.sound('Ring', 'exe'));
+			cNum += 1;
+
+			// Use the existing center receptor's confirm animation only.
+			// This deliberately does not change its size, scale, or position.
+			if (playerStrums != null && playerStrums.members.length > 2 && playerStrums.members[2] != null)
+				playerStrums.members[2].animation.play('confirm', true);
+		}
 
 		// add newest note to front of notesHitArray
 		// the oldest notes are at the end and are removed first
