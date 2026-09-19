@@ -161,6 +161,7 @@ class ChartingState extends MusicBeatState
 
 		updateGrid();
 
+		vocals = new FlxSound();
 		loadSong(_song.song);
 		Conductor.changeBPM(_song.bpm);
 		Conductor.mapBPMChanges(_song);
@@ -548,15 +549,21 @@ class ChartingState extends MusicBeatState
 	function loadSong(daSong:String):Void
 	{
 		if (FlxG.sound.music != null)
-		{
 			FlxG.sound.music.stop();
-			// vocals.stop();
-		}
 
-		FlxG.sound.playMusic(Paths.inst(daSong), 0.6);
+		if (vocals == null)
+			vocals = new FlxSound();
 
-		// WONT WORK FOR TUTORIAL OR TEST SONG!!! REDO LATER
-		vocals = new FlxSound().loadEmbedded(Paths.voices(daSong));
+		#if web
+			// HTML5 audio is asynchronous. Stream the editor audio directly from
+			// the published song files instead of requiring synchronous embedding.
+			FlxG.sound.music = FlxG.sound.stream(Paths.instStreamURL(daSong), 0.6, false, null, false);
+			vocals = new FlxSound().loadStream(Paths.voicesStreamURL(daSong), false, false, null, null);
+		#else
+			FlxG.sound.playMusic(Paths.inst(daSong), 0.6);
+			vocals = new FlxSound().loadEmbedded(Paths.voices(daSong));
+		#end
+
 		FlxG.sound.list.add(vocals);
 
 		FlxG.sound.music.pause();
