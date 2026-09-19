@@ -399,13 +399,25 @@ class GameOverSubstate extends MusicBeatSubstate
 
 	function playMusicSafe(key:String, volume:Float = 1, loop:Bool = true):Void
 	{
+		var oldMusic = FlxG.sound.music;
+		if (oldMusic != null)
+		{
+			oldMusic.onComplete = null;
+			FlxG.sound.defaultMusicGroup.remove(oldMusic);
+			if (oldMusic.playing)
+				oldMusic.stop();
+			if (FlxG.sound.music == oldMusic)
+				FlxG.sound.music = null;
+		}
 		FlxG.sound.playMusic(Paths.music(key), volume, loop);
 	}
 
 	function playVoiceLine(path:String,
 			num:Int = 0) // FOR FUCKS SAKE OKAY LISTEN UP SO WHAT I TRIED IS TO SIMPLY MAKE IT LOOK TROUGH ALL THE FILES IN THE FOLDER BUT FOR SOME REASON IT WOULDN'T STOP BREAKING SO I HAD TO MAKE A FUCKING PARAMETER BASED ON THE NUMBER OF VOICLINES SO NOTHING FUCKS UP.
 	{
-		FlxTween.tween(FlxG.sound.music, {volume: 0.4}, 0.3);
+		var gameOverMusic = FlxG.sound.music;
+		if (gameOverMusic != null && gameOverMusic.playing)
+			FlxTween.tween(gameOverMusic, {volume: 0.4}, 0.3);
 
 		var rng = Std.string(FlxG.random.int(1, num));
 
@@ -421,7 +433,8 @@ class GameOverSubstate extends MusicBeatSubstate
 		voiceline.play();
 		voiceline.onComplete = function()
 		{
-			FlxTween.tween(FlxG.sound.music, {volume: 1}, 0.3);
+			if (gameOverMusic != null && gameOverMusic == FlxG.sound.music && gameOverMusic.playing)
+				FlxTween.tween(gameOverMusic, {volume: 1}, 0.3);
 		}
 		FlxG.sound.list.add(voiceline);
 	}
@@ -440,7 +453,8 @@ class GameOverSubstate extends MusicBeatSubstate
 		if (!isEnding)
 		{
 			isEnding = true;
-			voiceline.volume = 0;
+			if (voiceline != null && voiceline.playing)
+				voiceline.volume = 0;
 			bf.playAnim('deathConfirm', true);
 			if (PlayState.SONG.song == 'too-slow' || PlayState.SONG.song == 'you-cant-run')
 				sonicDEATH.playAnim('retry', true);
@@ -474,4 +488,18 @@ class GameOverSubstate extends MusicBeatSubstate
 			});
 		}
 	}
+	override function destroy():Void
+	{
+		if (voiceline != null)
+		{
+			voiceline.onComplete = null;
+			if (voiceline.playing)
+				voiceline.stop();
+			FlxG.sound.list.remove(voiceline, true);
+			voiceline.destroy();
+			voiceline = null;
+		}
+		super.destroy();
+	}
+
 }
