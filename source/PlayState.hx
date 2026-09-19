@@ -285,6 +285,10 @@ class PlayState extends MusicBeatState
 
 	var defaultCamZoom:Float = 1.05;
 
+	// Keep Triple Trouble's ring receptors visually consistent even when
+	// the atlas switches between static/press/confirm frames of different sizes.
+	private static inline var RING_STRUM_SIZE:Float = 110;
+
 	public static var daPixelZoom:Float = 6;
 
 	public static var theFunne:Bool = true;
@@ -3862,7 +3866,21 @@ class PlayState extends MusicBeatState
 					playerStrums.add(babyArrow);
 			}
 
+			if (isRing)
+			{
+				babyArrow.animation.callback = function(animName:String, frameNumber:Int, frameIndex:Int)
+				{
+					if (babyArrow.frameWidth > 0)
+						babyArrow.setGraphicSize(RING_STRUM_SIZE);
+				};
+			}
+
 			babyArrow.animation.play('static');
+			if (isRing)
+			{
+				babyArrow.setGraphicSize(RING_STRUM_SIZE);
+				babyArrow.updateHitbox();
+			}
 			babyArrow.x += 50;
 			babyArrow.x += ((FlxG.width / 2) * player);
 
@@ -6237,8 +6255,9 @@ class PlayState extends MusicBeatState
 			{
 				var ringStrum = playerStrums.members[2];
 				ringStrum.animation.play('confirm', true);
-				ringStrum.scale.set(1.08, 1.08);
-				FlxTween.tween(ringStrum.scale, {x: 1, y: 1}, 0.12);
+				ringStrum.setGraphicSize(RING_STRUM_SIZE);
+				ringStrum.updateHitbox();
+				FlxTween.tween(ringStrum.scale, {x: ringStrum.scale.x, y: ringStrum.scale.y}, 0.12);
 			}
 		}
 
