@@ -30,6 +30,7 @@ class PauseSubState extends MusicBeatSubstate
 	var perSongOffset:FlxText;
 	
 	var offsetChanged:Bool = false;
+	var ignoreAcceptUntilRelease:Bool = true;
 
 	public function new(x:Float, y:Float)
 	{
@@ -113,8 +114,16 @@ class PauseSubState extends MusicBeatSubstate
 
 		super.update(elapsed);
 
+		// Enter is also a pause key in the game. Ignore the opening key press
+		// for this first pause-menu frame so it cannot immediately choose Resume.
+		if (ignoreAcceptUntilRelease)
+		{
+			if (!FlxG.keys.pressed.ENTER && !FlxG.keys.pressed.SPACE && !FlxG.keys.pressed.Z)
+				ignoreAcceptUntilRelease = false;
+		}
+
 		var oldOffset:Float = 0;
-		var accepted = controls.ACCEPT;
+		var accepted = controls.ACCEPT && !ignoreAcceptUntilRelease;
 
 		/*
 		var gamepad:FlxGamepad = FlxG.gamepads.lastActive;
