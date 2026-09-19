@@ -499,7 +499,11 @@ class PlayState extends MusicBeatState
 
 				preloaded = true;
 			}
+			#if web
+			FlxG.sound.music = FlxG.sound.stream(Paths.instStreamURL(PlayState.SONG.song), 0, false, null, false);
+			#else
 			FlxG.sound.playMusic(Paths.inst(PlayState.SONG.song), 0, false);
+			#end
 			// LOL
 		}
 		else
@@ -3284,7 +3288,11 @@ class PlayState extends MusicBeatState
 
 		if (!paused)
 		{
+			#if web
+			FlxG.sound.music = FlxG.sound.stream(Paths.instStreamURL(PlayState.SONG.song), 1, false, null, false);
+			#else
 			FlxG.sound.playMusic(Paths.inst(PlayState.SONG.song), 1, false);
+			#end
 		}
 
 		FlxG.sound.music.onComplete = function() // skill issue + ratio + blocked + didn't ask.
@@ -3369,10 +3377,23 @@ class PlayState extends MusicBeatState
 
 		curSong = songData.song;
 
+		#if web
+		if (SONG.needsVoices)
+		{
+			vocals = new FlxSound().loadStream(Paths.voicesStreamURL(PlayState.SONG.song), false, false, null, function()
+			{
+				if (songStarted && !vocals.playing)
+					vocals.play();
+			});
+		}
+		else
+			vocals = new FlxSound();
+		#else
 		if (SONG.needsVoices)
 			vocals = new FlxSound().loadEmbedded(Paths.voices(PlayState.SONG.song));
 		else
 			vocals = new FlxSound();
+		#end
 
 		trace('loaded vocals');
 
