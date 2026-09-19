@@ -500,7 +500,9 @@ class PlayState extends MusicBeatState
 				preloaded = true;
 			}
 			#if web
+			// Prime the browser stream without leaving it playing during state setup.
 			FlxG.sound.music = FlxG.sound.stream(Paths.instStreamURL(PlayState.SONG.song), 0, false, null, false);
+			FlxG.sound.music.pause();
 			#else
 			FlxG.sound.playMusic(Paths.inst(PlayState.SONG.song), 0, false);
 			#end
@@ -3385,10 +3387,17 @@ class PlayState extends MusicBeatState
 
 		curSong = songData.song;
 
-				if (SONG.needsVoices)
+		#if web
+		if (SONG.needsVoices)
+			vocals = new FlxSound().loadStream(Paths.voicesStreamURL(PlayState.SONG.song), false, false, null, null);
+		else
+			vocals = new FlxSound();
+		#else
+		if (SONG.needsVoices)
 			vocals = new FlxSound().loadEmbedded(Paths.voices(PlayState.SONG.song));
 		else
 			vocals = new FlxSound();
+		#end
 
 		trace('loaded vocals');
 
